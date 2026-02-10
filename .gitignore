@@ -42,7 +42,8 @@ app-example
 /ios
 /android
 
-.env.local
+.env
+.env.*
 
 # base images
 assets/images/base*
