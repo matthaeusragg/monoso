@@ -75,8 +75,9 @@ export default function CategoryAnalysisScreen() {
             }))}, [transactions, settings, start, end]);
     
     const irregularTransactions = useMemo(() => {
-        return(
-            getIrregularTransactions({
+        return( 
+            settings.spreadIrregularTransactions
+            ? getIrregularTransactions({
                 transactions, 
                 starttime: start?.getTime(), 
                 endtime: end?.getTime(), 
@@ -84,6 +85,7 @@ export default function CategoryAnalysisScreen() {
                 categoryId: thisCategoryId, 
                 categoryIdList: thisCategoryId === "uncategorized" ? categories.map((c) => c.id) : []
             })
+            : []
     )}, [transactions, settings, start, end]);
 
     const renderIrregularTransactionItem = ({ item, index }: { item: {transaction : Transaction, this_period_amount: number}, index: number }) => {
@@ -116,8 +118,8 @@ export default function CategoryAnalysisScreen() {
                 headers={[
                     { component: <PeriodValueLineChartGroup
                         data={analyticsPeriods}
-                        lineColor="#3b82f6"
-                        avgLineColor="#ef4444"
+                        lineColor={isDarkMode ? '#60A5FA' : '#2563EB'}
+                        avgLineColor={isDarkMode ? '#F87171' : '#DC2626'}
                         initialPeriodsToShow={6}
                     />, sticky: false},
                     { component: 

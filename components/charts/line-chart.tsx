@@ -1,6 +1,6 @@
 import colors from '@/constants/nativewindColors';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Circle, LinearGradient, Line as SkiaLine, LineProps as SkiaLineProps, Text as SkiaText, matchFont, vec } from '@shopify/react-native-skia';
+import { Circle, DashPathEffect, LinearGradient, Line as SkiaLine, LineProps as SkiaLineProps, Text as SkiaText, matchFont, vec } from '@shopify/react-native-skia';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { SharedValue, useDerivedValue } from 'react-native-reanimated';
@@ -89,20 +89,26 @@ export const CustomLineChart = ({
           }}
           xAxis={{
             font,
+            lineColor: colors[colorSchemeKey].content.tertiary,
             labelRotate: -30,
-            labelColor: colors[colorSchemeKey].content.tertiary,
+            labelColor: colors[colorSchemeKey].content.secondary,
             labelOffset: 5,
             tickCount: Math.min(chartData.length,Math.max(chartData.length/2, 8)), // from some number of tickmarks onwards, only every other tick is shown
             formatXLabel: (v) => v ? `${v}` : "", // this prevents random "undefined" labels
           }}
           yAxis={[{
             font,
-            labelColor: colors[colorSchemeKey].content.tertiary,
+            lineColor: colors[colorSchemeKey].content.tertiary,
+            linePathEffect: <DashPathEffect intervals={[
+              5, // "on" intervals
+              3 // "off" intervals
+            ]}/>,
+            labelColor: colors[colorSchemeKey].content.secondary,
             labelOffset: 10,
             formatYLabel: (v) => `${v}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`,
           }]}
           padding={{bottom: 30}}
-          // domainPadding={{ top: 15, left: 10, right: 50 }}
+          domainPadding={{ top: 10, bottom: 1, left: 0, right: 0 }}
         >
           {({ points, chartBounds }) => {
             // bounds.value = chartBounds;
@@ -118,7 +124,7 @@ export const CustomLineChart = ({
                 <LinearGradient
                   start={vec(0, chartBounds.top)}
                   end={vec(0, chartBounds.bottom)}
-                  colors={[color1, `${color1}00`]} // Gradient from color to transparent
+                  colors={[`${color1}dd`, `${color1}00`]} // Gradient from color to transparent
                 />
               </Area>
               <Line
@@ -128,11 +134,11 @@ export const CustomLineChart = ({
                 curveType="linear"
               />
 
-              {/* Dataset 2: Optional Curved Line */}
+              {/* Dataset 2: Optional Line */}
               {chartData[0].y2 && (
                 <Line
                   points={points.y2}
-                  color={color2 || '#000'}
+                  color={color2 || 'red'}
                   strokeWidth={2}
                   curveType="linear"
                 />
@@ -144,7 +150,7 @@ export const CustomLineChart = ({
                   xPosition={pressState.x.position}
                   top={chartBounds.top}
                   bottom={chartBounds.bottom}
-                  color="gray"
+                  color={colors[colorSchemeKey].content.accent}
                   strokeWidth={1}
                   style="stroke"
                 />
@@ -161,6 +167,7 @@ export const CustomLineChart = ({
                     x={labelXPos} 
                     y={y1LabelYPos} 
                     text={y1LabelText} 
+                    color={colors[colorSchemeKey].content.primary}
                 />
 
                 {/* Y2 Indicator Circle & Label (only if y2 exists) */}
@@ -177,6 +184,7 @@ export const CustomLineChart = ({
                         x={labelXPos} 
                         y={y2LabelYPos} 
                         text={y2LabelText} 
+                        color={colors[colorSchemeKey].content.primary}
                     />
                   </>
                 )}

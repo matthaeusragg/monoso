@@ -31,7 +31,7 @@ const colors = {
 
       },
       outline: {
-        default: '#e2e8f0',
+        default: '#94a3b8',
         focus: '#1f7a8c',
       },
     },
@@ -64,7 +64,7 @@ const colors = {
         transparent: '#ffffff66',
       },
       outline: {
-        default: '#1e293b',
+        default: '#64748b',
         focus: '#38b2ac',
       },
     },

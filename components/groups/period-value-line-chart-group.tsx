@@ -1,4 +1,5 @@
 import { className } from '@/constants/classNames';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AnalyticsPeriod } from '@/types/models';
 import React, { useMemo, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -14,8 +15,8 @@ interface PeriodValueLineChartGroupProps {
 
 export const PeriodValueLineChartGroup: React.FC<PeriodValueLineChartGroupProps> = ({
   data,
-  lineColor = '#3b82f6',
-  avgLineColor = '#ef4444',
+  lineColor = useColorScheme() === 'dark'? '#60A5FA' : '#2563EB',
+  avgLineColor = useColorScheme() === 'dark'? '#F87171' : '#DC2626',
   initialPeriodsToShow = 6,
 }) => {
   const [periodsToShow, setPeriodsToShow] = useState(
@@ -100,14 +101,14 @@ export const PeriodValueLineChartGroup: React.FC<PeriodValueLineChartGroupProps>
             className="w-4 h-4 rounded-full"
             style={{ backgroundColor: lineColor }}
           />
-          <Text className="text-xs text-light-content-tertiary dark:text-dark-content-tertiary">Actual Values</Text>
+          <Text className="text-xs text-light-content-secondary dark:text-dark-content-secondary">Actual Values</Text>
         </View>
         <View className="flex-row items-center gap-2">
           <View
             className="w-4 h-1"
             style={{ backgroundColor: avgLineColor }}
           />
-          <Text className="text-xs text-light-content-tertiary dark:text-dark-content-tertiary">Average</Text>
+          <Text className="text-xs text-light-content-secondary dark:text-dark-content-secondary">Average</Text>
         </View>
       </View>
     </View>

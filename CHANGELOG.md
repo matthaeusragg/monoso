@@ -35,4 +35,8 @@ Initial release
 
 ### Removed
 
-- some too generic default keywords
+- some too generic default category keywords
+
+### Improved
+
+- Theme colouring for the line chart on the category analysis details screen
