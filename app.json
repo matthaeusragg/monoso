@@ -14,6 +14,7 @@
     },
     "android": {
       "package": "com.matthaeusragg.monoso",
+      "versionCode": 2,
       "adaptiveIcon": {
         "backgroundColor": "#292b39",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

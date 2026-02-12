@@ -22,11 +22,12 @@ const CategoriesTab = () => {
   const [editMode, setEditMode] = useState(false);
   const [addCategoryModalVisible, setAddCategoryModalVisible] = useState(false);
 
+  const RenderBox = editMode ? View : TouchableOpacity;
   const renderItem = ({ item, drag, isActive }: { item: Category, drag : any, isActive : any }) => (
-    <TouchableOpacity
+    <RenderBox
       className={className.item}
       style={{ backgroundColor: item.color ?? (isDarkMode ? colors.dark.content.accent : colors.light.content.accent) }}
-      onPress={() => router.push(`/category/${item.id}`)}
+      onPress={() => router.push(`/category/${item.id}`)} // if RenderBox is a View, this prop is simply ignored
     >
       <Text className={className.text.item}>{item.name}</Text>
       {editMode && (
@@ -39,7 +40,7 @@ const CategoriesTab = () => {
           </TouchableOpacity>
         </View>
       )}
-    </TouchableOpacity>
+    </RenderBox>
   );
 
   return (

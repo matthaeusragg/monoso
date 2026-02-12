@@ -18,13 +18,8 @@ type SettingsContextType = {
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
-const DEFAULT_SETTINGS : Settings = {
-  startDate: new Date(2000,0,1).toISOString(),
-  periodLength: "monthly",
-  analyseIncomeInstead: false,
-  spreadIrregularTransactions: false,
-  defaultCurrency: "€",
-};
+import default_settings from '@/data/default_settings.json';
+const DEFAULT_SETTINGS : Settings = default_settings.settings as Settings; // as Settings is necessary to assert that periodLength is of the correct type
 const settingsKey = "settings";
 
 export function SettingsProvider({ children } : {children : React.ReactNode}) {

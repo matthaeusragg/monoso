@@ -23,7 +23,8 @@ export function AnalyticsProvider({ children } : {children : React.ReactNode}) {
    * @param earliest Format: Date().getTime()
    * @param latest Format: Date().getTime()
    * @param breakpoint Format: Date()
-   * @param unit 
+   * @param amount The number of days, months or years
+   * @param unit Which unit (day, month or year) amount refers to
    * @returns 
    */
   const generatePeriodsArray = (earliest : number, latest: number, breakpoint: Date, amount: number, unit: UnitOptions) => {
@@ -102,7 +103,14 @@ export function AnalyticsProvider({ children } : {children : React.ReactNode}) {
         break;
     }
 
-    const times = transactions.map(t => new Date(t.timestamp).getTime());
+    // all timestamps 
+    // Note: including timestamps from spread transactions means that the earliest or latest period could have no transactions to show
+    const regulartx_times = transactions.map(tx => new Date(tx.timestamp).getTime());
+    // all truthy timestamps in tx.spread_period_start and tx.spread_period_end for spread transactions
+    const spreadtx_times = transactions
+      .filter(tx => tx.handling_type === "spread")
+      .flatMap(tx => [tx.spread_period_start,tx.spread_period_end].flatMap(period_timestamp => period_timestamp ? [new Date(period_timestamp).getTime()] : []));
+    const times = [...regulartx_times, ...spreadtx_times];
     const earliest = Math.min(...times);
     const latest = Math.max(...times);
     const breakpoint = new Date(settings.startDate);

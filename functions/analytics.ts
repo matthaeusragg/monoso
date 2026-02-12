@@ -5,15 +5,29 @@ import { Transaction } from "@/types/models";
  * @param transaction 
  * @param starttime start time in the format Date().getTime()
  * @param endtime end time in the format Date().getTime()
- * @returns returns described proportion (negative if endtime < starttime), or undefined if the spread period of the transaction cannot be computed
+ * @returns returns described proportion, or undefined if the spread period of the transaction cannot be computed or is negative
  */
 export const computeSpreadProportion = (transaction : Transaction, starttime? : number, endtime?: number) : number | undefined => {
     const txstarttime = new Date(transaction.spread_period_start ?? "").getTime(); // this will be NaN if spread_period_start is invalid
     const txendtime = new Date(transaction.spread_period_end ?? "").getTime(); // this will be NaN if spread_period_end is invalid
     if(
         txstarttime && txendtime // check if any of them is NaN (note: 0 epoch is also falsy but unrealistic)
-        && txendtime > txstarttime // is it sensible to spread?
+        && txendtime >= txstarttime // is it sensible to spread?
     ) {
+        // if spread to only one point in time
+        // return 1 if within period, 0 if outside
+        if(txendtime === txstarttime) {
+            return ((!starttime || txstarttime >= starttime)
+                && (!endtime || txendtime < endtime))
+                ? 1
+                : 0;
+        }
+        // if periods do not overlap
+        // return 0
+        else if((starttime && starttime >= txendtime) ||
+            (endtime && endtime <= txstarttime)) {
+            return 0;
+        }
         const spreadstarttime = starttime ? Math.max(txstarttime, starttime) : txstarttime; 
         const spreadendtime = endtime ? Math.min(txendtime, endtime) : txendtime; 
         return (spreadendtime - spreadstarttime) / (txendtime - txstarttime);
@@ -61,9 +75,6 @@ export const categoryValue = (
                 ? (!t.category_id || !categoryIdList.includes(t.category_id))
                 // else match category
                 : (t.category_id && t.category_id === categoryId));
-            const time = t.timestamp ? new Date(t.timestamp).getTime() : null;
-            const isAfterStart = !starttime || (time && time >= starttime);
-            const isBeforeEnd = !endtime || (time && time < endtime);
             const txvalue = parseFloat(t.amount);
             const matchesType =  txvalue && !( // observe that 0 is falsy
                 (type === "expenses" && txvalue > 0) 
@@ -76,8 +87,13 @@ export const categoryValue = (
                 if(considerSpread && t.handling_type === "spread") {
                     catval += (computeSpreadProportion(t, starttime, endtime) ?? 1) * txvalue;
                 }
-                else if(isAfterStart && isBeforeEnd) {
-                    catval += txvalue;
+                else { 
+                    const timestamptime = new Date(t.timestamp).getTime();
+                    const isAfterStart = !starttime || (timestamptime >= starttime);
+                    const isBeforeEnd = !endtime || (timestamptime < endtime);
+                    if(isAfterStart && isBeforeEnd) {
+                        catval += txvalue;
+                    }
                 }
             }
         }
@@ -113,13 +129,10 @@ export const getIrregularTransactions = ({
     const irregularTransactions : { transaction: Transaction, this_period_amount: number }[] = [];
     
     for(const t of transactions) {
-        const timestamptime = new Date(t.timestamp).getTime();
         const txvalue = parseFloat(t.amount);
         if(
-            // after starttime
-            (!starttime || timestamptime >= starttime)
-            // before endtime
-            && (!endtime || timestamptime < endtime)
+            // it is a spread transaction
+            t.handling_type === "spread"
             // nonzero existing value
             && txvalue
             // type matches the value
@@ -132,8 +145,6 @@ export const getIrregularTransactions = ({
                 ? !t.category_id || !categoryIdList.includes(t.category_id)
             // else match category exactly
                 : t.category_id === categoryId))
-            // it is a spread transaction
-            && t.handling_type === "spread"
         ) {
             irregularTransactions.push({
                 transaction: t,
@@ -142,5 +153,7 @@ export const getIrregularTransactions = ({
         }
     }
 
-    return irregularTransactions.sort((a,b) => new Date(a.transaction.timestamp).getTime() - new Date(b.transaction.timestamp).getTime());
+    return irregularTransactions
+            .filter(irrtx => irrtx.this_period_amount !== 0)
+            .sort((a,b) => new Date(a.transaction.timestamp).getTime() - new Date(b.transaction.timestamp).getTime());
 }

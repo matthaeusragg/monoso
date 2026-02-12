@@ -1,0 +1,9 @@
+{
+    "settings": {
+        "startDate": "1999-12-31T23:00:00.000Z",
+        "periodLength": "monthly",
+        "analyseIncomeInstead": false,
+        "spreadIrregularTransactions": true,
+        "defaultCurrency": "€"
+    }
+}

@@ -106,3 +106,16 @@ export const irregularsTransactions: Transaction[] = [
   },
 ];
 
+
+const trickySpreadTransactions : Transaction[] = [
+  {
+    id: "2",
+    name: "Test",
+    amount: "-100",
+    timestamp: "2026-01-02T00:00:00.000Z",
+    category_id: undefined,
+    handling_type: "spread",
+    spread_period_start: "2025-07-01T00:00:00.000Z",
+    spread_period_end: "2025-08-01T00:00:00.000Z",
+  }
+]

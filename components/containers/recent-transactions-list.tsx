@@ -28,7 +28,7 @@ export default function RecentTransactionsList({numberOfTransactions=3, ...props
         >
             <RenderItemTransactionContent
                 nametext={item.name}
-                amounttext={item.amount}
+                amounttext={parseFloat(item.amount).toFixed(2)}
             />
         </View>
     )};

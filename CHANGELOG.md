@@ -22,3 +22,17 @@ Initial release
 - Categories tab to customize categories and their keywords
 - Functionality to automatically categorize transactions by keyword search
 - Light and dark theme support
+
+## [Internal testing release 3(1.0.0)]
+
+### Fixed
+
+- Some computations for spreadable transactions: Shown time periods, partial amounts and alternative texts for empty transaction arrays
+
+### Added
+
+- An option to navigate to the transaction details screen from the category details screen on the analysis tab
+
+### Removed
+
+- some too generic default keywords

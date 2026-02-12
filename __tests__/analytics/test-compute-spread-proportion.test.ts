@@ -26,7 +26,7 @@ describe("computeSpreadProportion", () => {
     expect(result).toBeCloseTo(5 / 10);
   });
 
-  test("returns negative proportion if endtime < starttime after clipping", () => {
+  test("returns negative proportion if period endtime < starttime after clipping", () => {
     const start = new Date("2024-01-09T00:00:00.000Z").getTime();
     const end = new Date("2024-01-05T00:00:00.000Z").getTime();
 
@@ -57,10 +57,10 @@ describe("computeSpreadProportion", () => {
     expect(result).toBeUndefined();
   });
 
-  test("returns undefined if spread_period_end <= spread_period_start", () => {
+  test("returns undefined if spread_period_end < spread_period_start", () => {
     const tx = {
       ...baseSpreadTransaction,
-      spread_period_end: baseSpreadTransaction.spread_period_start,
+      spread_period_end: "2000-01-05T00:00:00.000Z",
     };
 
     const result = computeSpreadProportion(tx);
@@ -78,5 +78,35 @@ describe("computeSpreadProportion", () => {
     const result = computeSpreadProportion(tx);
 
     expect(result).toBeUndefined();
+  });
+  test("returns zero if intervals do not overlap", () => {
+    const start = new Date("2023-01-25T00:00:00.000Z").getTime();
+    const end = new Date("2023-12-26T00:00:00.000Z").getTime(); // does not overlap
+
+    const result = computeSpreadProportion(baseSpreadTransaction, start, end);
+
+    expect(result).toEqual(0);
+  });
+
+  test("returns 1 if spread_period_end === spread_period_start and within [starttime, endtime)", () => {
+    const tx = {
+      ...baseSpreadTransaction,
+      spread_period_end: baseSpreadTransaction.spread_period_start,
+    };
+
+    const result = computeSpreadProportion(tx);
+
+    expect(result).toEqual(1);
+  });
+
+  test("returns 0 if spread_period_end === spread_period_start and outside of [starttime, endtime)", () => {
+    const tx = {
+      ...baseSpreadTransaction,
+      spread_period_end: baseSpreadTransaction.spread_period_start,
+    };
+
+    const result = computeSpreadProportion(tx, new Date("2026-01-05T00:00:00.000Z").getTime());
+
+    expect(result).toEqual(0);
   });
 });

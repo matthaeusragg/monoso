@@ -10,9 +10,10 @@ import { useSettings } from "@/context/settings-context";
 import { useTransactions } from "@/context/transaction-context";
 import { categoryValue, getIrregularTransactions } from "@/functions/analytics";
 import { AnalyticsPeriod, Transaction } from "@/types/models";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo } from "react";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { twMerge } from "tailwind-merge";
 
 export default function CategoryAnalysisScreen() {
     // this page supports thisCategoryId === "uncategorized" as a special case, taking all transactions that are not equal to any category
@@ -23,6 +24,7 @@ export default function CategoryAnalysisScreen() {
     const {settings} = useSettings();
     const isDarkMode = useColorScheme() === 'dark';
     const {categories} = useCategories();
+    const router = useRouter();
 
     const getThisCategory = () => {
       if(thisCategoryId === "uncategorized") {
@@ -57,11 +59,11 @@ export default function CategoryAnalysisScreen() {
                 const timestamptime = new Date(tx.timestamp).getTime();
                 let txvalue = parseFloat(tx.amount);
                 return(
-                    thisCategoryId ==="uncategorized" 
+                    (thisCategoryId ==="uncategorized" 
                     // if "uncategorized", exclude all categories
                     ? !tx.category_id || !categories.map((c) => c.id).includes(tx.category_id)
                     // else matches category
-                    : tx.category_id === thisCategoryId
+                    : tx.category_id === thisCategoryId)
                     // timestamp within period
                     && (!start || timestamptime >= start.getTime())
                     && (!end || timestamptime < end.getTime())
@@ -91,11 +93,11 @@ export default function CategoryAnalysisScreen() {
         <TouchableOpacity
             className={`${isFirst ? "rounded-t-2xl" : ""} ${isLast ? "rounded-b-2xl" : ""} ${className.item}`}
             style={{backgroundColor: getThisCategory()?.color ?? (isDarkMode ? colors.dark.content.accent : colors.light.content.accent)}}
-            // onPress={() => router.push(`/category/${item.id}`)}
+            onPress={() => router.push(`/category/transaction/${item.transaction.id}`)}
         >
             <RenderItemTransactionContent
                 nametext={item.transaction.name}
-                amounttext={item.this_period_amount + (item.transaction.currency ? " " + item.transaction.currency : "")}
+                amounttext={item.this_period_amount.toFixed(2) + (item.transaction.currency ? " " + item.transaction.currency : "")}
             />
         </TouchableOpacity>)
     };
@@ -110,7 +112,7 @@ export default function CategoryAnalysisScreen() {
         <View className={className.container}>        
             <WrappedTransactionSectionList
                 transactions={regularTransactions}
-                onPress={(transaction) => {}}
+                onPress={(transaction) => router.push(`/category/transaction/${transaction.id}`)}
                 headers={[
                     { component: <PeriodValueLineChartGroup
                         data={analyticsPeriods}
@@ -118,16 +120,24 @@ export default function CategoryAnalysisScreen() {
                         avgLineColor="#ef4444"
                         initialPeriodsToShow={6}
                     />, sticky: false},
-                    { component: <PeriodNavigator/>, sticky: false},
+                    { component: 
+                    <>
+                        <PeriodNavigator/>
+                        {regularTransactions.length === 0 && irregularTransactions.length === 0 && (
+                            <Text className={twMerge(className.text.subheading, "pt-3")}>
+                                No transactions {categoryDescriptionInHeaders} in the selected period.
+                            </Text>
+                        )}
+                    </>, sticky: false},
                     { component: regularTransactions.length > 0 && (
-                    <Text className={`pt-3 pb-2 ${className.text.subheading}`}>
+                    <Text className={twMerge(className.text.subheading, "pt-3")}>
                         {`${settings.spreadIrregularTransactions ? "Regular" : "All"} transactions ${categoryDescriptionInHeaders} and in the selected period`}
                     </Text>
                     ), sticky: false }
                 ]}
                 flatListConfig={{
                     header: irregularTransactions.length > 0 && (
-                    <Text className={`pt-7 pb-2 ${className.text.subheading}`}>
+                    <Text className={twMerge(className.text.subheading, regularTransactions.length > 0 ? "pt-7" : "pt-3", "pb-3")}>
                         {`Irregular transactions ${categoryDescriptionInHeaders} and their contribution to this period`}
                     </Text>),
                     data: irregularTransactions,
