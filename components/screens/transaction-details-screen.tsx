@@ -6,6 +6,7 @@ import TransactionEditor from "@/components/groups/transaction-editor";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { className } from "@/constants/classNames";
 import colors from "@/constants/nativewindColors";
+import { isDeepEqual } from "@/functions/handling";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,16 +18,13 @@ export default function TransactionDetailsScreen() {
 
   const { updateTransactions, removeTransaction, getTransaction } = useTransactions();
 
-  const isDark = useColorScheme() === "dark";
+  const colorSchemeKey = useColorScheme() === 'dark' ? 'dark' : 'light';
 
   const [transaction, setTransaction] = useState(() =>
     getTransaction(id)
   );
 
-  // useEffect(() => {
-  //   const t = getTransaction(id);
-  //   setTransaction(t || undefined);
-  // }, [transactions]);
+  const hasChanges = !isDeepEqual(transaction, getTransaction(id));
 
   if (!transaction) return <Text>Transaction not found.</Text>;
 
@@ -46,15 +44,15 @@ export default function TransactionDetailsScreen() {
           <IconSymbol
             name="delete"
             size={28}
-            color={isDark ? colors.dark.content.negative : colors.light.content.negative}
+            color={ colors[colorSchemeKey].content.negative}
           />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className={className.button.secondary}
+          className={ hasChanges ? className.button.primary : className.button.secondary}
           onPress={() => {
-            if (transaction) {
+            if (hasChanges && transaction) {
               if (!transaction.name.trim() // if name is empty
                   || !/^-?\d*(\.\d+)?$/.test(transaction.amount.trim())) // if amount is not typed correctly
                   return;
@@ -67,7 +65,7 @@ export default function TransactionDetailsScreen() {
           <IconSymbol
             name="done"
             size={28}
-            color={isDark ? colors.dark.content.primary : colors.light.content.primary}
+            color={ colors[colorSchemeKey].content.primary}
           />
           </View>
         </TouchableOpacity>

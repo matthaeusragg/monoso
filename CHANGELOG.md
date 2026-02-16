@@ -40,3 +40,6 @@ Initial release
 ### Improved
 
 - Theme colouring for the line chart on the category analysis details screen
+- Categories screen now has a separate local state
+- Save buttons light up when user edits need saving
+- More intuitive button placements in some places

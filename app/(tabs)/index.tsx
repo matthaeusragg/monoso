@@ -97,6 +97,7 @@ export default function HomeScreen() {
       CARDS.push(
       { 
         id: 'balanceComparison', 
+        onPress: () => {router.push(`/analysis`)}, 
         children: <>
         <Text className={twMerge(className.text.subheading2, "pt-1")}>Expenses comparison</Text>
         <Text className={twMerge(className.text.footnote, "pb-2 text-left")}>

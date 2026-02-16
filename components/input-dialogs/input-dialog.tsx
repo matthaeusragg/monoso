@@ -1,11 +1,14 @@
+import { className } from "@/constants/classNames";
 import colors from "@/constants/nativewindColors";
 import React, { PropsWithChildren } from "react";
 import { Modal, Pressable, Text, useColorScheme, View } from "react-native";
+import { twMerge } from "tailwind-merge";
 import CancelSubmitButtons from "../elements/cancel-submit-buttons";
 
 type DialogProps = PropsWithChildren<{
     visible : boolean;
-    title? : string | null;
+    title? : string;
+    message?: string;
     onCancel: (...args: any[]) => any;
     onSubmit: (...args: any[]) => any;
     cancelName? : string;
@@ -16,6 +19,7 @@ export default function InputDialog({
   children,
   visible,
   title,
+  message,
   onCancel,
   ...props
 } : DialogProps) {
@@ -38,9 +42,12 @@ export default function InputDialog({
               : colors.light.surface.elevated,
           }}
         >
-            <Text className="text-xl font-bold mb-4 text-light-content-primary dark:text-dark-content-primary">
+            {title && (<Text className={twMerge(className.text.heading3, "mb-4")}>
                 {title}
-            </Text>
+            </Text>)}
+            {message && (<Text className={twMerge(className.text.paragraph, "mb-2")}>
+                {message}
+            </Text>)}
             
             {children}
 
