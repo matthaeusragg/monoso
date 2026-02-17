@@ -43,6 +43,7 @@ export default function TransactionInputDialog({
       onCancel={() => { onCancel();reset(); }} 
       onSubmit={() => {
                 if (!transaction.name.trim() // if name is empty
+                  || !transaction.amount.trim() // or amount is empty
                   || !/^-?\d*(\.\d+)?$/.test(transaction.amount.trim())) // if amount is not typed correctly
                   return;
                 addTransactions({ 

@@ -3,8 +3,8 @@ const button = "mx-1 p-2 rounded-lg items-center justify-center"
 
 export const className = {
   container: "flex-1 p-4",
-  header: "flex-row justify-between items-center mb-4",
-  item: "flex-row justify-between p-3 border-b",
+  header: "flex-row min-h-[50px] items-center justify-between mb-4",
+  item: "flex-row min-h-[45px] items-center justify-between px-3 py-2 border-b",
   text: {
     heading1: "text-3xl font-bold text-light-content-accent dark:text-dark-content-accent",
     heading2: "text-2xl font-bold text-light-content-primary dark:text-dark-content-primary",
@@ -26,8 +26,8 @@ export const className = {
   button: {
     submit: `flex-1 ${button}`,
     cancel: `flex-1 ${button}`,
-    primary: "flex rounded-lg ml-3 shadow-md items-center justify-center bg-light-content-accent dark:bg-dark-content-accent",
-    secondary: "flex rounded-lg ml-3 shadow-md items-center justify-center bg-light-surface-elevated dark:bg-dark-surface-elevated",
+    primary: "flex min-w-[55px] min-h-[45px] rounded-lg ml-3 shadow-md items-center justify-center bg-light-content-accent dark:bg-dark-content-accent",
+    secondary: "flex min-w-[55px] min-h-[45px] rounded-lg ml-3 shadow-md items-center justify-center bg-light-surface-elevated dark:bg-dark-surface-elevated",
     icon: "ml-5",
     end: `${button}`
   },

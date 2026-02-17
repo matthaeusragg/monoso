@@ -10,7 +10,7 @@ import { useTransactions } from "@/context/transaction-context";
 
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TransactionsTab() {
@@ -34,7 +34,7 @@ export default function TransactionsTab() {
           className={className.button.secondary}
           onPress={() => setAddDialogVisible(true)}
         >
-          <Text className="px-5 text-5xl text-light-content-primary dark:text-dark-content-primary">
+          <Text className="text-5xl text-light-content-primary dark:text-dark-content-primary">
             +
           </Text>
         </TouchableOpacity>
@@ -43,9 +43,7 @@ export default function TransactionsTab() {
           className={className.button.secondary}
           onPress={() => setImportModalVisible(true)}
         >
-          <View className="px-5">
           <IconSymbol size={28} name="import" color={ isDarkMode ? colors.dark.content.primary : colors.light.content.primary}/>
-          </View>
         </TouchableOpacity>
       </CustomHeader>
 

@@ -63,7 +63,7 @@ export default function AnalysisTab () {
       <CustomHeader name="Analysis">
         <TouchableOpacity className={className.button.secondary}
           onPress = {() => setSettingsModalVisible(true)}>
-          <Text className="px-5 text-5xl text-center">
+          <Text className="text-5xl text-center">
             {<IconSymbol size={28} name="settings" color={(isDarkMode ? colors.dark.content.primary : colors.light.content.primary)} />}
           </Text>
         </TouchableOpacity>

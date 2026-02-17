@@ -3,8 +3,8 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { className } from '@/constants/classNames';
 import colors from '@/constants/nativewindColors';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { Pressable, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, Pressable, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -19,12 +19,41 @@ const CategoriesTab = () => {
   const insets = useSafeAreaInsets(); // used so that I can use manual extra padding to the flatlist so that it does not hide under the tabbar
 
   // the globally used categories array
-  const { categories, setCategories, addCategory, removeCategory } = useCategories();
-  // the categories used on this screen, save globally only upon clicking "Save"
+  const { categories, setCategories, addCategory } = useCategories();
+  // the categories used on this screen, save globally only upon clicking "Save" or when adding
   const [localCategories, setLocalCategories] = useState<Category[]>(categories);
   const [editMode, setEditMode] = useState(false);
   const [addCategoryModalVisible, setAddCategoryModalVisible] = useState(false);
   const hasChanges = useMemo(() => !isDeepEqual(localCategories, categories), [localCategories, categories]);
+
+  /**
+   * removeCategory but for localCategories
+   * @param id the category's id 
+   */
+  const removeLocalCategory = (id : string) => {
+    setLocalCategories(prev => [...prev.filter(c => c.id !== id)]);
+  }
+
+
+  // This effect is necessary so that, specifically, when addCategory adds a new category to the GLOBAL categories, then local categories also reflect this change
+  useEffect(() => {
+    setLocalCategories(categories);
+  }, [categories]);
+
+  /**
+   * open an alert modal and run removeLocalCategory(item.id) upon user confirmation
+   * @param item The category pending deletion
+   */
+  const handleRemoveLocalCategory = (item : Category) => {
+    Alert.alert(
+      "Delete category?",
+      `Are you sure you want to delete the category ${item.name}?`,
+      [
+        {text: "Cancel", style: "cancel"},
+        {text: "Delete", style: "destructive", onPress: () => removeLocalCategory(item.id)}
+      ]
+    )
+  };
 
   const RenderBox = editMode ? View : TouchableOpacity;
   const renderItem = ({ item, drag, isActive }: { item: Category, drag : any, isActive : any }) => (
@@ -39,7 +68,7 @@ const CategoriesTab = () => {
           <Pressable onLongPress={drag} delayLongPress={0} className={className.button.icon}>
         <IconSymbol size={28} name="reorder" color={isActive ? colors[colorSchemeKey].content.tertiary : colors[colorSchemeKey].surface.sunken} />
         </Pressable>
-        <TouchableOpacity onPress={() => removeCategory(item.id)} className={className.button.icon}>
+        <TouchableOpacity onPress={() => handleRemoveLocalCategory(item)} className={className.button.icon}>
           <IconSymbol size={28} name="delete" color={ colors[colorSchemeKey].content.negative} />
           </TouchableOpacity>
         </View>
@@ -51,12 +80,12 @@ const CategoriesTab = () => {
     <SafeAreaView className={className.container} style={{paddingBottom: insets.bottom + 25}}> 
     {/* manual extra padding for tabbar */}
       <CustomHeader name="Categories">
-        <TouchableOpacity className={className.button.secondary}
+        {!editMode && (<TouchableOpacity className={className.button.secondary}
           onPress = {() => setAddCategoryModalVisible(true)}>
-          <Text className="px-5 text-5xl text-center text-light-content-primary dark:text-dark-content-primary">
+          <Text className="text-5xl text-center text-light-content-primary dark:text-dark-content-primary">
             {"+"}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity>)}
         <TouchableOpacity 
           className={
             hasChanges
@@ -68,9 +97,7 @@ const CategoriesTab = () => {
             setEditMode(!editMode);
           }
         }>
-          <Text className="px-5 text-xl ">
             {editMode ? <IconSymbol size={28} name="done" color={ hasChanges ? colors[colorSchemeKey].content.onAccent : colors[colorSchemeKey].content.primary}/> : <IconSymbol size={28} name="edit" color={ colors[colorSchemeKey].content.primary } />}
-          </Text>
         </TouchableOpacity>
       </CustomHeader>
 
@@ -85,6 +112,7 @@ const CategoriesTab = () => {
       title="Add Category"
       onCancel = {() => setAddCategoryModalVisible(false)}
       onSubmit = {(value : string, color : string) => {
+        // note the useEffect to set localCategories above
         addCategory({ id : Date.now().toString(), name: value.trim(), color : color, keywords: [] });
         setAddCategoryModalVisible(false)
       }}

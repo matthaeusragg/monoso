@@ -12,6 +12,7 @@ import { useCategories } from '@/context/category-context';
 
 import ColorPicker from '@/components/elements/color-picker';
 import { isDeepEqual } from '@/functions/handling';
+import { useConfirmBackNavigation } from '@/hooks/use-confirm-back-navigation';
 import { Category, Keyword } from '@/types/models';
 import { FlashList } from '@shopify/flash-list';
 import { twMerge } from 'tailwind-merge';
@@ -29,6 +30,9 @@ const CategoryKeywords = () => {
     
     const [addKeywordModalVisible, setAddKeywordModalVisible] = useState(false);
     const hasChanges = useMemo(() => !isDeepEqual(localCategory, getThisCategory()), [localCategory, categories]);
+    
+    // intercept router.back()
+    useConfirmBackNavigation(hasChanges);
 
     const addKeyword = (value : string) => {
         if(!value.trim()) return;
@@ -59,7 +63,7 @@ const CategoryKeywords = () => {
         </TouchableOpacity>
       </View>
     </View>
-  );
+    );
 
     return (
     <>

@@ -32,6 +32,7 @@ Initial release
 ### Added
 
 - An option to navigate to the transaction details screen from the category details screen on the analysis tab
+- Alerts when user performs deletions or discards changes
 
 ### Removed
 
