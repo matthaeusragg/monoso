@@ -33,6 +33,7 @@ Initial release
 
 - An option to navigate to the transaction details screen from the category details screen on the analysis tab
 - Alerts when user performs deletions or discards changes
+- a simple "Loading..." screen to prevent flickering to empty state on app launch
 
 ### Removed
 

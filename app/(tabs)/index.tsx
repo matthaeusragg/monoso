@@ -28,7 +28,9 @@ export default function HomeScreen() {
     maximumFractionDigits: 2
   });
 
-  const {transactions} = useTransactions();
+  const {transactions, transactionsHydrated} = useTransactions();
+
+
   const {periods} = useAnalytics();
   const {settings} = useSettings();
 
@@ -117,55 +119,63 @@ export default function HomeScreen() {
   return (
     <SafeAreaView
       className={className.container}>
-      <CustomHeader name={transactions.length === 0 ? "Welcome to the monoso app! " : "Welcome"}></CustomHeader>
 
-      {transactions.length === 0 && (<>
-        <View className="p-4">      
-          <Text className={`${className.text.paragraph} text-base mb-3`}>
-            With monoso you can track your expenses by
-          </Text>
+      {!transactionsHydrated 
+      // Loading screen to prevent flickering on app launch
+        ? <Text className={className.text.subheading}>Loading...</Text>
+        // Main start screen
+        : (<>
+        <CustomHeader name={transactions.length === 0 ? "Welcome to the monoso app! " : "Welcome"}></CustomHeader>
 
-          <View className="ml-2 mb-4">
-            <Text className={`${className.text.paragraph} mb-1`}>
-              {'\u2022'} grouping your transactions into customizable categories
+        {transactions.length === 0 && (<>
+          <View className="p-4">      
+            <Text className={`${className.text.paragraph} text-base mb-3`}>
+              With monoso you can track your expenses by
             </Text>
-            <Text className={`${className.text.paragraph} mb-1`}>
-              {'\u2022'} comparing your expenses across different customizable time periods
-            </Text>
-            <Text className={`${className.text.paragraph} mb-1`}>
-              {'\u2022'} marking transactions as "irregular" (e.g. yearly bills)
+
+            <View className="ml-2 mb-4">
+              <Text className={`${className.text.paragraph} mb-1`}>
+                {'\u2022'} grouping your transactions into customizable categories
+              </Text>
+              <Text className={`${className.text.paragraph} mb-1`}>
+                {'\u2022'} comparing your expenses across different customizable time periods
+              </Text>
+              <Text className={`${className.text.paragraph} mb-1`}>
+                {'\u2022'} marking transactions as "irregular" (e.g. yearly bills)
+              </Text>
+            </View>
+
+            <Text className={`${className.text.paragraph} font-semibold mt-2`}>
+              Start by adding or importing transactions!
             </Text>
           </View>
+        </>)}
 
-          <Text className={`${className.text.paragraph} font-semibold mt-2`}>
-            Start by adding or importing transactions!
-          </Text>
-        </View>
-      </>)}
+        <CardMasonry data = {CARDS}/>
 
-      <CardMasonry data = {CARDS}/>
+        {transactions.length === 0 && (<>
+          <Text className={className.text.paragraph}>Disclaimer: </Text>
+          <Text className={className.text.paragraph}>This app was developed as a learning project and with personal requirements in mind. No guarantees on functionality.</Text>
+        </>)}
 
-      {transactions.length === 0 && (<>
-        <Text className={className.text.paragraph}>Disclaimer: </Text>
-        <Text className={className.text.paragraph}>This app was developed as a learning project and with personal requirements in mind. No guarantees on functionality.</Text>
-      </>)}
+        <TransactionInputDialog
+          visible={addTransactionDialogVisible}
+          onCancel={() => setAddTransactionDialogVisible(false)}
+          onSubmit={() => setAddTransactionDialogVisible(false)}
+        />
 
-      <TransactionInputDialog
-        visible={addTransactionDialogVisible}
-        onCancel={() => setAddTransactionDialogVisible(false)}
-        onSubmit={() => setAddTransactionDialogVisible(false)}
-      />
-
-      {transactions.length === 0 && (
-        <CsvUploadModal
-                visible={importTransactionsDialogVisible}
-                onCancel={() => {
-                  setImportTransactionsDialogVisible(false);
-                }}
-                onImport={() => {
-                  setImportTransactionsDialogVisible(false);
-                }}
-              />
+        {transactions.length === 0 && (
+          <CsvUploadModal
+                  visible={importTransactionsDialogVisible}
+                  onCancel={() => {
+                    setImportTransactionsDialogVisible(false);
+                  }}
+                  onImport={() => {
+                    setImportTransactionsDialogVisible(false);
+                  }}
+                />
+        )}
+        </>
       )}
     </SafeAreaView>
   );
