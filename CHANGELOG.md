@@ -44,3 +44,4 @@ Initial release
 - Categories screen now has a separate local state
 - Save buttons light up when user edits need saving
 - More intuitive button placements in some places
+- The transactions details screen and the transactions input dialog are now keyboard aware

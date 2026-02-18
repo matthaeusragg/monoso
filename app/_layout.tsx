@@ -15,6 +15,7 @@ import * as Sentry from "@sentry/react-native";
 import { isRunningInExpoGo } from "expo";
 import { useNavigationContainerRef } from "expo-router";
 import React from "react";
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: !isRunningInExpoGo(),
 });
@@ -52,6 +53,7 @@ function RootLayout() {
   }
 
   return (
+    <KeyboardProvider>
       <CategoryProvider>
         <TransactionProvider>
           <SettingsProvider>
@@ -66,6 +68,7 @@ function RootLayout() {
       </SettingsProvider>
       </TransactionProvider>
       </CategoryProvider>
+      </KeyboardProvider>
   );
 }
 

@@ -8,7 +8,6 @@ import CancelSubmitButtons from "../elements/cancel-submit-buttons";
 type DialogProps = PropsWithChildren<{
     visible : boolean;
     title? : string;
-    message?: string;
     onCancel: (...args: any[]) => any;
     onSubmit: (...args: any[]) => any;
     cancelName? : string;
@@ -19,7 +18,6 @@ export default function InputDialog({
   children,
   visible,
   title,
-  message,
   onCancel,
   ...props
 } : DialogProps) {
@@ -44,9 +42,6 @@ export default function InputDialog({
         >
             {title && (<Text className={twMerge(className.text.heading3, "mb-4")}>
                 {title}
-            </Text>)}
-            {message && (<Text className={twMerge(className.text.paragraph, "mb-2")}>
-                {message}
             </Text>)}
             
             {children}

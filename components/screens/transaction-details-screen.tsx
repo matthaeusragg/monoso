@@ -10,7 +10,8 @@ import { isDeepEqual } from "@/functions/handling";
 import { useConfirmBackNavigation } from "@/hooks/use-confirm-back-navigation";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Alert, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TransactionDetailsScreen() {
@@ -55,7 +56,7 @@ export default function TransactionDetailsScreen() {
   return (
     <>
     <Stack.Screen options={{title: `${transaction.name}`}}/>
-    <ScrollView className="flex-1 pt-6 px-4">
+    <KeyboardAwareScrollView className="flex-1 pt-6 px-4">
       <CustomHeader name="Transaction Details">
         <TouchableOpacity
           className={className.button.secondary}
@@ -96,7 +97,7 @@ export default function TransactionDetailsScreen() {
       </CustomHeader>
 
       <TransactionEditor style={{paddingBottom: insets.bottom+25}} transaction={transaction} setTransaction={setTransaction}/>
-    </ScrollView>
+    </KeyboardAwareScrollView>
     </>
   );
 }

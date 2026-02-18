@@ -2,6 +2,7 @@ import TransactionEditor from "@/components/groups/transaction-editor";
 import { useTransactions } from "@/context/transaction-context";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import InputDialog from "./input-dialog";
 
 export default function TransactionInputDialog({
@@ -53,10 +54,11 @@ export default function TransactionInputDialog({
                 onSubmit();
                 reset();
               }}>
-      
-      <TransactionEditor
-        transaction={transaction} 
-        setTransaction={setTransaction}/>
+      <KeyboardAwareScrollView>
+        <TransactionEditor
+          transaction={transaction} 
+          setTransaction={setTransaction}/>
+      </KeyboardAwareScrollView>
     </InputDialog>
   );
 }

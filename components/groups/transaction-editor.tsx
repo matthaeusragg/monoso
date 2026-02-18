@@ -3,7 +3,7 @@ import { useCategories } from "@/context/category-context";
 import { useTransactions } from "@/context/transaction-context";
 import { Transaction } from "@/types/models";
 import React from "react";
-import { ScrollView, Text, View, ViewProps } from "react-native";
+import { Text, View, ViewProps } from "react-native";
 import CustomTextInput from "../elements/custom-text-input";
 import DateTimePickerComponent from "../elements/date-time-picker-component";
 import StyledPicker from "../elements/styled-picker";
@@ -43,7 +43,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
   ]
 
   return (
-    <ScrollView {...props}>
+    <View {...props}>
       <Text className={className.text.subheading}>
         Name *
       </Text>
@@ -135,6 +135,6 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
           />
       </>
       )}
-    </ScrollView>
+    </View>
   );
 }
