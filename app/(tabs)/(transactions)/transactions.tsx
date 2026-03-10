@@ -50,7 +50,7 @@ export default function TransactionsTab() {
       {/** the component below also works as is with a regular TransactionsSectionList */}
       {transactions.length >0 ? (
         <WrappedTransactionSectionList
-        transactions={transactions}
+        flexibleTransactions={transactions.map((tx) => ({transaction: tx}))}
         onPress={(transaction) => router.push(`/transaction/${transaction.id}`)}
         />
       )

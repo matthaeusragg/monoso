@@ -40,7 +40,8 @@
         { "id": "20", "word": "Avanti" },
         { "id": "21", "word": "Parken" },
         { "id": "22", "word": "Parking" },
-        { "id": "23", "word": "Garage" }
+        { "id": "23", "word": "Garage" },
+        { "id": "24", "word": "Westbahn" }
       ]
     },
     {
@@ -95,7 +96,7 @@
         { "id": "14", "word": "cafe" },
         { "id": "15", "word": "kaffee" },
         { "id": "16", "word": "restaurant" },
-        { "id": "17", "word": "eis" },
+        { "id": "17", "word": "catering" },
         { "id": "18", "word": "burger" },
         { "id": "19", "word": "gasthaus" },
         { "id": "20", "word": "wirtshaus" },

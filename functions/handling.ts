@@ -39,3 +39,18 @@ export const isDeepEqual = (a: any, b: any): boolean => {
 
   return true;
 };
+
+/**
+ * unifies num.toFixed(2) (for number of decimal places) and num.toLocaleString() for thousand separators
+ */
+export const numberToFixedLocaleString = (
+  num : number, 
+  fractionDigits : number = 2,
+  locale : string = 'en-UK'
+) : string => {
+  'worklet'; // this ensures numberToFixedLocaleString is available on the UI thread, which is needed to call it within react-native-reanimated's useDerivedValue in my line-chart component
+  return num.toLocaleString(locale, {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits
+  })
+}

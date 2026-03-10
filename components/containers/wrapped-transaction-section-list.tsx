@@ -8,25 +8,27 @@ import { Text, TouchableOpacity } from "react-native";
 import RenderItemTransactionContent from "../elements/render-item-transaction-content";
 import WrappedUnifiedList, { WrappedUnifiedListProps } from "./wrapped-unified-list";
 
+import { numberToFixedLocaleString } from "@/functions/handling";
+
 interface WrappedTransactionSectionListProps extends Omit<WrappedUnifiedListProps,"sectionListConfig"> {
-    transactions: Transaction[], onPress: (transaction : Transaction) => void
+    flexibleTransactions: { transaction: Transaction, override_amount?: number }[], onPress: (transaction : Transaction) => void
 }
 
-export default function WrappedTransactionSectionList({ transactions, onPress, ...props}: WrappedTransactionSectionListProps ) {
+export default function WrappedTransactionSectionList({ flexibleTransactions, onPress, ...props}: WrappedTransactionSectionListProps ) {
     const { categories } = useCategories();
     const isDarkMode = useColorScheme() === "dark";
 
 
     /** GROUP TRANSACTIONS BY DATE */
     const sections = useMemo(() => {
-        const sorted = [...transactions].sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        const sorted = [...flexibleTransactions].sort(
+        (a, b) => new Date(b.transaction.timestamp).getTime() - new Date(a.transaction.timestamp).getTime()
         );
 
         const groups: Record<string, typeof sorted> = {};
 
         sorted.forEach((t) => {
-        const date = new Date(t.timestamp).toLocaleDateString('en-US', 
+        const date = new Date(t.transaction.timestamp).toLocaleDateString('en-US', 
             {
             weekday: "short",
             month: "short",
@@ -43,9 +45,9 @@ export default function WrappedTransactionSectionList({ transactions, onPress, .
         title: date,
         data: groups[date],
         }));
-    }, [transactions]);
+    }, [flexibleTransactions]);
 
-    const renderItem = ({ item, index, section } : { item: Transaction, index: number, section: any }) => {
+    const renderItem = ({ item, index, section } : { item: { transaction: Transaction, override_amount?: number }, index: number, section: any }) => {
         const isFirst = index === 0;
         const isLast = index === section.data.length - 1;
         return (
@@ -53,14 +55,14 @@ export default function WrappedTransactionSectionList({ transactions, onPress, .
             className={`${isFirst ? "rounded-t-2xl" : ""} ${isLast ? "rounded-b-2xl" : ""} ${className.item}`}
             style={{
                 backgroundColor:
-                categories.find((c) => c.id === item.category_id)?.color ??
+                categories.find((c) => c.id === item.transaction.category_id)?.color ??
                 (isDarkMode ? colors.dark.content.accent : colors.light.content.accent),
             }}
-            onPress={() => onPress(item)}
+            onPress={() => onPress(item.transaction)}
         >
             <RenderItemTransactionContent
-                nametext={item.name}
-                amounttext={parseFloat(item.amount).toFixed(2) + (item.currency ? " " + item.currency : "")}
+                nametext={item.transaction.name}
+                amounttext={numberToFixedLocaleString(item.override_amount ?? parseFloat(item.transaction.amount)) + (item.transaction.currency ? " " + item.transaction.currency : "")}
             />
         </TouchableOpacity>
     )};

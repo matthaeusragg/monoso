@@ -38,6 +38,7 @@ export const computeSpreadProportion = (transaction : Transaction, starttime? : 
 /**
  * computes the sum of transactions matching the category, whose timestamp is at least starttime and less than endtime, matching the given type
  * starttime, endtime and type are all optional. If not given, the corresponding condition is ignored/true
+ * A transaction's analysis amount is used where possible, otherwise, the function defaults to the regular amount
  * 
  * @param transactions list of transactions to filter
  * @param categoryId id of the relevant category. "uncategorized" for all transactions not assigned to a category, empty to include all categories
@@ -75,7 +76,7 @@ export const categoryValue = (
                 ? (!t.category_id || !categoryIdList.includes(t.category_id))
                 // else match category
                 : (t.category_id && t.category_id === categoryId));
-            const txvalue = parseFloat(t.amount);
+            const txvalue = parseFloat(t.analysis_amount ?? t.amount);
             const matchesType =  txvalue && !( // observe that 0 is falsy
                 (type === "expenses" && txvalue > 0) 
                 || (type === "income" && txvalue < 0))
@@ -102,6 +103,7 @@ export const categoryValue = (
 
 /**
  * computes a list of transactions for which handling_type === "spread", and the associated spread amounts
+ * A transaction's analysis amount is used where possible to compute spread amounts, otherwise, the function defaults to the regular amount
  * @param transactions a list of transactions to filter
  * @param starttime start time of the period in the form Date.getTime()
  * @param endtime end time of the period in the form Date.getTime()
@@ -109,7 +111,7 @@ export const categoryValue = (
  * @param categoryId if set, only transactions of this category are included
  * @returns a list of transactions with spread amounts. 
  * The list is sorted by transaction.timestamp.
- * The spread amount is the transaction.amount multiplied by the proportion of the period [transaction.spread_start_time, transaction.spread_end_time] that falls within [starttime, endtime]
+ * The spread amount is the transaction.amount (or transaction.analysis_amount) multiplied by the proportion of the period [transaction.spread_start_time, transaction.spread_end_time] that falls within [starttime, endtime]
  */
 export const getIrregularTransactions = ({
     transactions, 
@@ -129,7 +131,7 @@ export const getIrregularTransactions = ({
     const irregularTransactions : { transaction: Transaction, this_period_amount: number }[] = [];
     
     for(const t of transactions) {
-        const txvalue = parseFloat(t.amount);
+        const txvalue = parseFloat(t.analysis_amount ?? t.amount);
         if(
             // it is a spread transaction
             t.handling_type === "spread"

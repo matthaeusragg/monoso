@@ -80,7 +80,7 @@ export default function AnalysisTab () {
             analyticsCategories.length > 0 
             ? (<DonutChart data={analyticsCategories} />)
             : (<Text className={twMerge(className.text.subheading, "text-center p-5")}>
-              There are no recorded {settings.analyseIncomeInstead ? "incoming transactions" : "expenses"} in this period. 
+              There are no recorded {settings.analyseIncomeInstead ? "incoming transactions" : "expenses"} included in the analysis in this period. 
             </Text>)
           }
           <Text className={className.text.footnote}>

@@ -12,6 +12,8 @@ import {
   useChartTransformState
 } from 'victory-native';
 
+import { numberToFixedLocaleString } from '@/functions/handling';
+
 interface CustomLineChartProps {
   chartData: {
   x: string;
@@ -48,10 +50,10 @@ export const CustomLineChart = ({
 
   // Use derived values to avoid triggering React renders
   const y1LabelText = useDerivedValue(() => {
-    return `${pressState.y.y1.value.value.toFixed(2)}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`;
+    return `${numberToFixedLocaleString(pressState.y.y1.value.value)}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`;
   });
   const y2LabelText = useDerivedValue(() => {
-    return `${pressState.y.y2.value.value.toFixed(2)}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`;
+    return `${numberToFixedLocaleString(pressState.y.y2.value.value)}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`;
   });
   const labelXPos = useDerivedValue(() => pressState.x.position.value + 5);
   const y1LabelYPos = useDerivedValue(() => pressState.y.y1.position.value - 5);
@@ -105,7 +107,7 @@ export const CustomLineChart = ({
             ]}/>,
             labelColor: colors[colorSchemeKey].content.secondary,
             labelOffset: 10,
-            formatYLabel: (v) => `${v}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`,
+            formatYLabel: (v) => `${v === undefined ? v : numberToFixedLocaleString(v,0)}${yAxisLabelSymbol ? ' ' + yAxisLabelSymbol : ''}`,
           }]}
           padding={{bottom: 30}}
           domainPadding={{ top: 10, bottom: 1, left: 0, right: 0 }}
@@ -135,7 +137,8 @@ export const CustomLineChart = ({
               />
 
               {/* Dataset 2: Optional Line */}
-              {chartData[0].y2 && (
+              {chartData[0].y2 != null // allows for null or undefined, but crucially, not for zero
+              && (
                 <Line
                   points={points.y2}
                   color={color2 || 'red'}

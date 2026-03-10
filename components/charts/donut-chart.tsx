@@ -8,6 +8,8 @@ import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import { twMerge } from 'tailwind-merge';
 
+import { numberToFixedLocaleString } from '@/functions/handling';
+
 interface DonutChartProps {
   data: AnalyticsCategory[];
   centerLabel?: string;
@@ -48,7 +50,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
         centerLabelComponent={() => (
           <View className="items-center justify-center">
             <Text className={className.text.heading2}>
-              {centerLabel || `${settings.defaultCurrency} ${total.toLocaleString()}`}
+              {centerLabel || `${settings.defaultCurrency} ${numberToFixedLocaleString(total)}`}
             </Text>
             <Text className={className.text.note}>Total</Text>
           </View>
@@ -76,7 +78,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
             </View>
             <View className="flex-row items-center">
               <Text className={twMerge(className.text.paragraph, "font-semibold mr-2")}>
-                {settings.defaultCurrency} {item.value.toLocaleString()}
+                {settings.defaultCurrency} {numberToFixedLocaleString(item.value)}
               </Text>
               <Text className={className.text.note}>
                 ({((item.value / total) * 100).toFixed(1)}%)

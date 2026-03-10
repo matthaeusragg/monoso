@@ -23,7 +23,11 @@ Initial release
 - Functionality to automatically categorize transactions by keyword search
 - Light and dark theme support
 
-## [Internal testing release 3(1.0.0)]
+## [Internal testing release 3(1.0.0)] - 2026-02-18
+
+- Fixed some computations related to expenses spread across time periods
+- Removed some too generic default category keywords
+- Made design, navigation and user interaction across the app more intuitive
 
 ### Fixed
 
@@ -46,3 +50,21 @@ Initial release
 - Save buttons light up when user edits need saving
 - More intuitive button placements in some places
 - The transactions details screen and the transactions input dialog are now keyboard aware
+
+
+## [Internal testing release 4(1.0.1)] - 2026-03-10
+
+### Added
+- an option to specify the amount of a transaction included in the analysis. This feature can also be used to exclude a transaction entirely from the analysis
+
+### Fixed
+- Added escape screen for the category analysis screen if (period-independently) all transactions for the category are removed from the analysis
+- Added a fix to an error with the line chart that occurred when the average line is zero
+
+### Improved
+- automatic back navigation on confirming edits on the category keywords screen
+- Numbers on the donut screen now show two decimal digits only
+- Numbers across the app (except for the input field) now show thousands separators
+- The time of spread period dates now defaults to the start/end of the day
+- Minor default category keyword improvements
+- Limited expense comparison to at most 12 prior periods for a more realistic comparison

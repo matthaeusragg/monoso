@@ -15,6 +15,8 @@ import { useMemo } from "react";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 
+import { numberToFixedLocaleString } from "@/functions/handling";
+
 export default function CategoryAnalysisScreen() {
     // this page supports thisCategoryId === "uncategorized" as a special case, taking all transactions that are not equal to any category
     const { id : thisCategoryId } = useLocalSearchParams<{ id: string }>();
@@ -57,7 +59,7 @@ export default function CategoryAnalysisScreen() {
         return(transactions
             .filter((tx) => {
                 const timestamptime = new Date(tx.timestamp).getTime();
-                let txvalue = parseFloat(tx.amount);
+                let txvalue = parseFloat(tx.analysis_amount ?? tx.amount);
                 return(
                     (thisCategoryId ==="uncategorized" 
                     // if "uncategorized", exclude all categories
@@ -72,7 +74,12 @@ export default function CategoryAnalysisScreen() {
                     // exclude irregular transactions if applicable
                     && (!settings.spreadIrregularTransactions || tx.handling_type !== "spread")
                 )
-            }))}, [transactions, settings, start, end]);
+            })
+            .map((tx) => ({
+                transaction: tx, 
+                override_amount: (tx.analysis_amount != null) ? parseFloat(tx.analysis_amount) : undefined
+            }))
+        )}, [transactions, settings, start, end]);
     
     const irregularTransactions = useMemo(() => {
         return( 
@@ -99,7 +106,7 @@ export default function CategoryAnalysisScreen() {
         >
             <RenderItemTransactionContent
                 nametext={item.transaction.name}
-                amounttext={item.this_period_amount.toFixed(2) + (item.transaction.currency ? " " + item.transaction.currency : "")}
+                amounttext={numberToFixedLocaleString(item.this_period_amount) + (item.transaction.currency ? " " + item.transaction.currency : "")}
             />
         </TouchableOpacity>)
     };
@@ -111,9 +118,18 @@ export default function CategoryAnalysisScreen() {
     return (
         <>
         <Stack.Screen options={{title: `${thisCategoryId === "uncategorized" ? "Other categories" : categories.filter(c => c.id === thisCategoryId)[0].name}`}}/>
+        { analyticsPeriods.every((analyticsPeriod) => analyticsPeriod.amount === 0) ? 
+        // escape screen if user removes all transactions from category and the screen is still open
+        (
+            <Text className={twMerge(className.text.subheading, "text-center p-5")}>
+                No {settings.analyseIncomeInstead ? "incoming transactions" : "expenses"} {categoryDescriptionInHeaders} and included in the analysis found.
+            </Text>
+        ) : 
+        // intended screen
+        (
         <View className={className.container}>        
             <WrappedTransactionSectionList
-                transactions={regularTransactions}
+                flexibleTransactions={regularTransactions}
                 onPress={(transaction) => router.push(`/category/transaction/${transaction.id}`)}
                 headers={[
                     { component: <PeriodValueLineChartGroup
@@ -148,6 +164,7 @@ export default function CategoryAnalysisScreen() {
                 }}
             />
             </View>
+        )}
         </>
         );
 }

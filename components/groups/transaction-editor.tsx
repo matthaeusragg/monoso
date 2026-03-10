@@ -9,6 +9,7 @@ import DateTimePickerComponent from "../elements/date-time-picker-component";
 import StyledPicker from "../elements/styled-picker";
 import SwitchAndDescription from "../elements/switch-and-description";
 
+
 interface Field {
   title: string,
   transactionKey: keyof Transaction
@@ -23,7 +24,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
   const { matchedCategory } = useTransactions();
   const { categories } = useCategories();
 
-  const handleChange = (key: keyof Transaction, value: string) => {
+  const handleChange = (key: keyof Transaction, value: string | undefined) => {
     setTransaction(prev => {
       const next = {...prev, [key]: value };
       if (next.category_id === "automatic") {
@@ -110,6 +111,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
         ))}
       </StyledPicker>
 
+      {/* Spreading transaction */}
       <SwitchAndDescription 
         value={transaction.handling_type === "spread"}
         setValue={(val) => handleChange("handling_type", val ? "spread" : "regular")}
@@ -122,7 +124,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
             Start date and time of the spread period
           </Text>
           <DateTimePickerComponent
-            timestamp={transaction.spread_period_start ?? transaction.timestamp}
+            timestamp={transaction.spread_period_start ?? new Date(new Date(transaction.timestamp).setHours(0,0,0,0)).toISOString()}
             setTimestamp={(val) => handleChange("spread_period_start", val)}
           />
 
@@ -130,11 +132,31 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
             End date and time of the spread period
           </Text>
           <DateTimePickerComponent
-            timestamp={transaction.spread_period_end ?? transaction.timestamp}
+            timestamp={transaction.spread_period_end ?? new Date(new Date(transaction.timestamp).setHours(23,59,59,999)).toISOString()}
             setTimestamp={(val) => handleChange("spread_period_end", val)}
           />
       </>
       )}
+
+      {/* Analysis amount */}
+      <SwitchAndDescription
+        value={transaction.analysis_amount == null} // note: using == instead of === allows for undefined AND null but no other falsy values, since null == undefined is true, but null === undefined is false
+        setValue={(val) => handleChange("analysis_amount", val ? undefined : "0")}
+        description="Fully include in analysis?"
+      />
+
+      {transaction.analysis_amount != null // note: using != instead of !== allows for null and undefined but no other falsy values
+      && (<>
+        <Text className={className.text.subheading}>
+          Amount included in analysis
+        </Text>
+        <CustomTextInput
+          placeholder="Analysis amount"
+          value={transaction.analysis_amount}
+          keyboardType="numeric"
+          onChangeText={(val) => handleChange("analysis_amount", val)}
+        />
+      </>)}
     </View>
   );
 }

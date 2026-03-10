@@ -17,6 +17,8 @@ import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { twMerge } from 'tailwind-merge';
 
+import { numberToFixedLocaleString } from '@/functions/handling';
+
 export default function HomeScreen() {
   const router = useRouter();
   const [addTransactionDialogVisible, setAddTransactionDialogVisible] = useState(false);
@@ -69,7 +71,7 @@ export default function HomeScreen() {
       });
     }
 
-    // BALANCE CHANGE OF LAST PERIOD TO CURRENT DATE COMPARED TO AVERAGE PERIOD
+    // BALANCE CHANGE OF LAST PERIOD TO CURRENT DATE COMPARED TO AVERAGE ACROSS AT MOST LAST 12 PERIODS
     if(periods.length >= 2) {
       // computations for balance comparison
       const {start, end} = getPeriodDates(periods, periods.length-1); 
@@ -90,9 +92,12 @@ export default function HomeScreen() {
           });
       }
 
+      // numberOfPeriodsToConsider includes the last period, so the average is taken across numberOfPeriodsToConsider-1
+      const numberOfPeriodsToConsider = Math.min(13, periodsBalanceChange.length);
+
       const lastMinusAverage = periodsBalanceChange[periodsBalanceChange.length-1].amount
         - (periodsBalanceChange.length > 1 
-          ? periodsBalanceChange.slice(0,-1).reduce((sum, item) => sum + item.amount, 0) / (periodsBalanceChange.length-1)
+          ? periodsBalanceChange.slice(numberOfPeriodsToConsider === periodsBalanceChange.length ? 0 : -numberOfPeriodsToConsider,-1).reduce((sum, item) => sum + item.amount, 0) / (numberOfPeriodsToConsider-1)
           : 0);
 
       // BALANCE CHANGE CARD
@@ -103,9 +108,9 @@ export default function HomeScreen() {
         children: <>
         <Text className={twMerge(className.text.subheading2, "pt-1")}>Expenses comparison</Text>
         <Text className={twMerge(className.text.footnote, "pb-2 text-left")}>
-            of most recent period to date, compared to the average across all ({periodsBalanceChange.length-1}) prior periods.
+            of most recent period to date, compared to the average across {numberOfPeriodsToConsider === periodsBalanceChange.length ? `all (${periodsBalanceChange.length-1})` : `the ${numberOfPeriodsToConsider-1}`} prior periods.
           </Text>
-        <Text className={twMerge(className.text.strong, "text-right")}>{periodsBalanceChange[periodsBalanceChange.length-1].amount.toFixed(2)}</Text>
+        <Text className={twMerge(className.text.strong, "text-right")}>{numberToFixedLocaleString(periodsBalanceChange[periodsBalanceChange.length-1].amount)}</Text>
         <Text className={twMerge(className.text.strong2, lastMinusAverage < 0 ? "text-light-content-positive dark:text-dark-content-positive" : "text-light-content-negative dark:text-dark-content-negative", "text-right")}>
           {comparisonFormatter.format(lastMinusAverage)}
           {/* <Text className="font-extralight text-light-content-primary dark:text-dark-content-primary">

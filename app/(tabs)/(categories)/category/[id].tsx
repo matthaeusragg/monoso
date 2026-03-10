@@ -2,7 +2,7 @@ import InputDialog from '@/components/input-dialogs/category-input-dialog';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { className } from '@/constants/classNames';
 import colors from '@/constants/nativewindColors';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +19,7 @@ import { twMerge } from 'tailwind-merge';
 
 const CategoryKeywords = () => {
     const { id } = useLocalSearchParams();
+    const router = useRouter();
     const colorSchemeKey = useColorScheme() === 'dark' ? 'dark' : 'light';
     const insets = useSafeAreaInsets(); // used so that I can use manual extra padding to the flatlist so that it does not hide under the tabbar
 
@@ -70,7 +71,15 @@ const CategoryKeywords = () => {
     <Stack.Screen options={{title: `${localCategory.name}`}}/>
     <View className={className.container} style={{paddingBottom: insets.bottom}}> 
       <CustomHeader name="Category keywords">
-          { hasChanges && (<TouchableOpacity className={hasChanges ? className.button.primary : className.button.secondary} onPress={() => {if(hasChanges) saveToGlobalCategories()}}>
+          { hasChanges && (<TouchableOpacity 
+            className={hasChanges ? className.button.primary : className.button.secondary} 
+            onPress={() => {
+              if(hasChanges) {
+                saveToGlobalCategories();
+                router.back();
+              }
+            }}
+            >
             <Text className="px-4 py-2 text-xl text-light-content-primary dark:text-dark-content-primary">
               { <IconSymbol size={28} name="done" color={ hasChanges ? colors[colorSchemeKey].content.onAccent : colors[colorSchemeKey].content.primary}/> }
             </Text>

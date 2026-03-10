@@ -7,6 +7,8 @@ import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { useColorScheme, View } from "react-native";
 import RenderItemTransactionContent from "../elements/render-item-transaction-content";
 
+import { numberToFixedLocaleString } from "@/functions/handling";
+
 interface RecentTransactionsListProps extends Omit<FlashListProps<Transaction>,'data' | 'renderItem' | 'keyExtractor'> {
     numberOfTransactions?: number;
 }
@@ -28,7 +30,7 @@ export default function RecentTransactionsList({numberOfTransactions=3, ...props
         >
             <RenderItemTransactionContent
                 nametext={item.name}
-                amounttext={parseFloat(item.amount).toFixed(2)}
+                amounttext={numberToFixedLocaleString(parseFloat(item.amount))}
             />
         </View>
     )};

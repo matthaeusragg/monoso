@@ -13,6 +13,8 @@ export interface Transaction {
   handling_type: string; // "regular" or "spread"
   spread_period_start?: string;
   spread_period_end?: string;
+
+  analysis_amount?: string;
 }
 
 export interface SelectableTransaction {
