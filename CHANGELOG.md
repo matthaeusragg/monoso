@@ -52,7 +52,7 @@ Initial release
 - The transactions details screen and the transactions input dialog are now keyboard aware
 
 
-## [Internal testing release 4(1.0.1)] - 2026-03-10
+## [Internal testing release 4(1.0.1)] - 2026-03-11
 
 ### Added
 - an option to specify the amount of a transaction included in the analysis. This feature can also be used to exclude a transaction entirely from the analysis
@@ -60,6 +60,7 @@ Initial release
 ### Fixed
 - Added escape screen for the category analysis screen if (period-independently) all transactions for the category are removed from the analysis
 - Added a fix to an error with the line chart that occurred when the average line is zero
+- Refined the amount field validation to fail for "" and "-"
 
 ### Improved
 - automatic back navigation on confirming edits on the category keywords screen
@@ -68,3 +69,5 @@ Initial release
 - The time of spread period dates now defaults to the start/end of the day
 - Minor default category keyword improvements
 - Limited expense comparison to at most 12 prior periods for a more realistic comparison
+- optional transaction fields on the transaction editor view are now hidden behind an expandable row to avoid cluttering the view
+- the period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period

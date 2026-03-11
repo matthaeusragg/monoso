@@ -117,7 +117,9 @@ export function AnalyticsProvider({ children } : {children : React.ReactNode}) {
 
     const periodsArray = generatePeriodsArray(earliest, latest, breakpoint, amount, unit);
     setPeriods(periodsArray);
-    setPeriodsIndex(periodsArray.length-1);
+    const now = new Date();
+    const defaultPeriodsIndex = periodsArray.findIndex(date => date > now);
+    setPeriodsIndex(defaultPeriodsIndex === -1 ? periodsArray.length-1 : Math.max(1, defaultPeriodsIndex));
 }
 
   // this effect updates periods every time transactions or settings update

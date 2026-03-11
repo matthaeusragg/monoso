@@ -5,7 +5,7 @@ import React from 'react';
 import { Switch, Text, View } from 'react-native';
 
 const SwitchAndDescription = ({value, setValue, description} : {value: boolean, setValue: React.Dispatch<React.SetStateAction<boolean>>, description: string}) => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   return (
     <View className="flex-row justify-between items-center pb-3">
             <View className="flex-1">
@@ -15,12 +15,12 @@ const SwitchAndDescription = ({value, setValue, description} : {value: boolean, 
             </View>
             <Switch
               trackColor={{
-                true: colors[isDarkMode ? 'dark' : 'light'].content.softAccent,
-                false: colors[isDarkMode ? 'dark' : 'light'].content.medium,
+                true: colors[colorScheme].content.softAccent,
+                false: colors[colorScheme].content.medium,
               }}
               thumbColor={value 
-                ? colors[isDarkMode ? 'dark' : 'light'].content.accent
-                : colors[isDarkMode ? 'dark' : 'light'].content.light
+                ? colors[colorScheme].content.accent
+                : colors[colorScheme].content.light
               }
               value={value} 
               onValueChange={(v) => setValue(v)}
