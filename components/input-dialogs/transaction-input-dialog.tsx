@@ -19,7 +19,7 @@ export default function TransactionInputDialog({
   const default_transaction = {
     id: "",
     name: "",
-    amount: "",
+    amount: "-",
     timestamp: new Date().toISOString(),
     category_id: "automatic",
     currency: "EUR",

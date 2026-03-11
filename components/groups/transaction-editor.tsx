@@ -60,7 +60,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
       <CustomTextInput
         placeholder="Amount"
         value={transaction.amount}
-        keyboardType="numeric"
+        inputMode="decimal"
         onChangeText={(val) => handleChange("amount", val)}
       />
       <Text className={className.text.subheading}>
@@ -70,6 +70,20 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
         timestamp={transaction.timestamp}
         setTimestamp={(val) => handleChange("timestamp", val)}
       />
+
+      <Text className={className.text.subheading}>
+        Category
+      </Text>
+      <StyledPicker
+        selectedValue={transaction.category_id}
+        onValueChange={(val) => handleChange("category_id", val)}
+      >
+        <StyledPicker.Item label="No category" value={null} />
+        <StyledPicker.Item label="Automatic" value={"automatic"} />
+        {categories.map((c) => (
+          <StyledPicker.Item key={c.id} label={c.name} value={c.id} />
+        ))}
+      </StyledPicker>
 
       {optional_fields.map((field) => (
         <View key={field.transactionKey}>
@@ -96,20 +110,6 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
         textAlignVertical="top" // required on Android to avoid centered text
         onChangeText={(val) => handleChange("further_information", val)}
       />
-
-      <Text className={className.text.subheading}>
-        Category
-      </Text>
-      <StyledPicker
-        selectedValue={transaction.category_id}
-        onValueChange={(val) => handleChange("category_id", val)}
-      >
-        <StyledPicker.Item label="No category" value={null} />
-        <StyledPicker.Item label="Automatic" value={"automatic"} />
-        {categories.map((c) => (
-          <StyledPicker.Item key={c.id} label={c.name} value={c.id} />
-        ))}
-      </StyledPicker>
 
       {/* Spreading transaction */}
       <SwitchAndDescription 
@@ -141,7 +141,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
       {/* Analysis amount */}
       <SwitchAndDescription
         value={transaction.analysis_amount == null} // note: using == instead of === allows for undefined AND null but no other falsy values, since null == undefined is true, but null === undefined is false
-        setValue={(val) => handleChange("analysis_amount", val ? undefined : "0")}
+        setValue={(val) => handleChange("analysis_amount", val ? undefined : "-0")}
         description="Fully include in analysis?"
       />
 
@@ -153,7 +153,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
         <CustomTextInput
           placeholder="Analysis amount"
           value={transaction.analysis_amount}
-          keyboardType="numeric"
+          inputMode="decimal"
           onChangeText={(val) => handleChange("analysis_amount", val)}
         />
       </>)}

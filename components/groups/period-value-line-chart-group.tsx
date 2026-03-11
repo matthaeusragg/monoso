@@ -58,7 +58,7 @@ export const PeriodValueLineChartGroup: React.FC<PeriodValueLineChartGroupProps>
           className={twMerge(className.text.paragraph, "border border-light-outline-default dark:border-dark-outline-default rounded-xl px-2 py-2 w-16 text-center")}
           value={inputValue}
           onChangeText={setInputValue}
-          keyboardType="number-pad"
+          inputMode="numeric"
           onSubmitEditing={handleApplyPeriods}
         />
         <Text className={className.text.paragraph}>

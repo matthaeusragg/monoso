@@ -31,6 +31,8 @@ const MAPPING = {
   'import': 'file-import', // MCI icon
   'document-text-outline' : 'document-text-outline',
   'settings' : 'settings',
+  'chevron.down' : 'chevron-down',
+  'chevron.up' : 'chevron-up',
 } as unknown as IconMapping;
 
 type IconSymbolProps = {
