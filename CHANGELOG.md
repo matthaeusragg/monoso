@@ -37,11 +37,11 @@ Initial release
 
 - An option to navigate to the transaction details screen from the category details screen on the analysis tab
 - Alerts when user performs deletions or discards changes
-- a simple "Loading..." screen to prevent flickering to empty state on app launch
+- A simple "Loading..." screen to prevent flickering to empty state on app launch
 
 ### Removed
 
-- some too generic default category keywords
+- Some too generic default category keywords
 
 ### Improved
 
@@ -52,11 +52,15 @@ Initial release
 - The transactions details screen and the transactions input dialog are now keyboard aware
 
 
-## [Internal testing release 4(1.0.1)] - 2026-03-11
+## [Internal testing release 4(1.0.1)] - 2026-03-12
+
+- Added an option to specify the amount contribution of each transaction to the analysis
+- Made adding and editing transactions more intuitive
+- Improved the expense comparison, time period navigation and more across the app
 
 ### Added
-- an option to specify the amount of a transaction included in the analysis. This feature can also be used to exclude a transaction entirely from the analysis
-- one can now switch between expenses and incoming transactions in the transaction editor, instead of typing a negative amount. Under the hood, expenses are still managed as negative amounts. The amount field now only allows entering non-negative floating point numbers
+- An option to specify the amount of a transaction included in the analysis. This feature can also be used to exclude a transaction entirely from the analysis
+- One can now switch between expenses and incoming transactions in the transaction editor, instead of typing a negative amount. Under the hood, expenses are still managed as negative amounts. The amount field now only allows entering non-negative floating point numbers
 
 ### Fixed
 - Added escape screen for the category analysis screen if (period-independently) all transactions for the category are removed from the analysis
@@ -64,12 +68,12 @@ Initial release
 - Refined the amount field validation to fail for "" and "-"
 
 ### Improved
-- automatic back navigation on confirming edits on the category keywords screen
+- Automatic back navigation on confirming edits on the category keywords screen
 - Numbers on the donut screen now show two decimal digits only
 - Numbers across the app (except for the input field) now show thousands separators
 - The time of spread period dates now defaults to the start/end of the day
 - Minor default category keyword improvements
 - Limited expense comparison to at most 12 prior periods for a more realistic comparison
-- optional transaction fields on the transaction editor view are now hidden behind an expandable row to avoid cluttering the view
-- the period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period
-- amount validation in the transaction editor
+- Optional transaction fields on the transaction editor view are now hidden behind an expandable row to avoid cluttering the view
+- The period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period
+- Amount validation in the transaction editor
