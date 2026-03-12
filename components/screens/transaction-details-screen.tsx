@@ -2,7 +2,7 @@ import { useTransactions } from "@/context/transaction-context";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import CustomHeader from "@/components/elements/custom-header";
-import TransactionEditor from "@/components/groups/transaction-editor";
+import TransactionEditor, { validateTransactionInput } from "@/components/groups/transaction-editor";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { className } from "@/constants/classNames";
 import colors from "@/constants/nativewindColors";
@@ -77,10 +77,7 @@ export default function TransactionDetailsScreen() {
           className={ hasChanges ? className.button.primary : className.button.secondary}
           onPress={() => {
             if (hasChanges && transaction) {
-              if (!transaction.name.trim() // if name is empty
-                  || !transaction.amount.trim() // or amount is empty
-                  || !/^-?\d+(\.\d+)?$|^-?\.\d+$/.test(transaction.amount.trim())) // if amount is not typed correctly
-                  return;
+              if(!validateTransactionInput(transaction)) return;
               updateTransactions(transaction);
             }
             router.back();

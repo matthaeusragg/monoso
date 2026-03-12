@@ -56,6 +56,7 @@ Initial release
 
 ### Added
 - an option to specify the amount of a transaction included in the analysis. This feature can also be used to exclude a transaction entirely from the analysis
+- one can now switch between expenses and incoming transactions in the transaction editor, instead of typing a negative amount. Under the hood, expenses are still managed as negative amounts. The amount field now only allows entering non-negative floating point numbers
 
 ### Fixed
 - Added escape screen for the category analysis screen if (period-independently) all transactions for the category are removed from the analysis
@@ -71,3 +72,4 @@ Initial release
 - Limited expense comparison to at most 12 prior periods for a more realistic comparison
 - optional transaction fields on the transaction editor view are now hidden behind an expandable row to avoid cluttering the view
 - the period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period
+- amount validation in the transaction editor

@@ -1,4 +1,4 @@
-import TransactionEditor from "@/components/groups/transaction-editor";
+import TransactionEditor, { validateTransactionInput } from "@/components/groups/transaction-editor";
 import { useTransactions } from "@/context/transaction-context";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
@@ -19,7 +19,7 @@ export default function TransactionInputDialog({
   const default_transaction = {
     id: "",
     name: "",
-    amount: "-",
+    amount: "",
     timestamp: new Date().toISOString(),
     category_id: "automatic",
     currency: "EUR",
@@ -43,11 +43,8 @@ export default function TransactionInputDialog({
       title="Add transaction" 
       onCancel={() => { onCancel();reset(); }} 
       onSubmit={() => {
-                if (!transaction.name.trim() // if name is empty
-                  || !transaction.amount.trim() // or amount is empty
-                  || !/^-?\d+(\.\d+)?$|^-?\.\d+$/.test(transaction.amount.trim())) // if amount is not typed correctly
-                  return;
-                addTransactions({ 
+                if(!validateTransactionInput(transaction)) return;
+                addTransactions({
                   ...transaction,
                   id: Date.now().toString(),
                 });

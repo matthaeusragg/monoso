@@ -8,7 +8,7 @@ import CsvUploadModal from '@/components/input-dialogs/csv-upload-dialog';
 import TransactionInputDialog from '@/components/input-dialogs/transaction-input-dialog';
 import { getPeriodDates } from '@/components/navigation/period-navigator';
 import { className } from '@/constants/classNames';
-import { useAnalytics } from '@/context/analytics-context';
+import { getPeriodsIndexClosestTo, useAnalytics } from '@/context/analytics-context';
 import { useSettings } from '@/context/settings-context';
 import { useTransactions } from '@/context/transaction-context';
 import { categoryValue } from '@/functions/analytics';
@@ -71,13 +71,15 @@ export default function HomeScreen() {
       });
     }
 
-    // BALANCE CHANGE OF LAST PERIOD TO CURRENT DATE COMPARED TO AVERAGE ACROSS AT MOST LAST 12 PERIODS
+    // BALANCE CHANGE OF LAST/CURRENT PERIOD TO CURRENT DATE COMPARED TO AVERAGE ACROSS AT MOST PREVIOUS 12 PERIODS
     if(periods.length >= 2) {
       // computations for balance comparison
-      const {start, end} = getPeriodDates(periods, periods.length-1); 
+      const currentPeriodsIndexMinusOne = getPeriodsIndexClosestTo(periods, new Date()) - 1;
+      const {start, end} = getPeriodDates(periods, currentPeriodsIndexMinusOne); 
 
       const periodTimePassedFactor = (start && end) ? Math.min(1, Math.max(0, (Date.now() - start.getTime()) / (end.getTime() - start.getTime()))) : 1;
 
+      // note: the periodsBalanceChange indices are shifted one down compared to the periodsIndex
       const periodsBalanceChange : {amount: number}[] = [];
       for(let i=1;i<periods.length;i++) {
           const {start: start_i, end: end_i} = getPeriodDates(periods, i);
@@ -92,12 +94,12 @@ export default function HomeScreen() {
           });
       }
 
-      // numberOfPeriodsToConsider includes the last period, so the average is taken across numberOfPeriodsToConsider-1
-      const numberOfPeriodsToConsider = Math.min(13, periodsBalanceChange.length);
+      // numberOfPeriodsToConsider excludes the last/current period, so the average is taken across numberOfPeriodsToConsider periods
+      const numberOfPeriodsToConsider = Math.min(12, currentPeriodsIndexMinusOne);
 
-      const lastMinusAverage = periodsBalanceChange[periodsBalanceChange.length-1].amount
-        - (periodsBalanceChange.length > 1 
-          ? periodsBalanceChange.slice(numberOfPeriodsToConsider === periodsBalanceChange.length ? 0 : -numberOfPeriodsToConsider,-1).reduce((sum, item) => sum + item.amount, 0) / (numberOfPeriodsToConsider-1)
+      const lastMinusAverage = periodsBalanceChange[currentPeriodsIndexMinusOne].amount
+        - (numberOfPeriodsToConsider > 0 
+          ? periodsBalanceChange.slice(currentPeriodsIndexMinusOne-numberOfPeriodsToConsider, currentPeriodsIndexMinusOne).reduce((sum, item) => sum + item.amount, 0) / (numberOfPeriodsToConsider)
           : 0);
 
       // BALANCE CHANGE CARD
@@ -108,9 +110,9 @@ export default function HomeScreen() {
         children: <>
         <Text className={twMerge(className.text.subheading2, "pt-1")}>Expenses comparison</Text>
         <Text className={twMerge(className.text.footnote, "pb-2 text-left")}>
-            of most recent period to date, compared to the average across {numberOfPeriodsToConsider === periodsBalanceChange.length ? `all (${periodsBalanceChange.length-1})` : `the ${numberOfPeriodsToConsider-1}`} prior periods.
+            of most recent period to date, compared to the average across {numberOfPeriodsToConsider === currentPeriodsIndexMinusOne ? `all (${numberOfPeriodsToConsider})` : `the ${numberOfPeriodsToConsider}`} prior periods.
           </Text>
-        <Text className={twMerge(className.text.strong, "text-right")}>{numberToFixedLocaleString(periodsBalanceChange[periodsBalanceChange.length-1].amount)}</Text>
+        <Text className={twMerge(className.text.strong, "text-right")}>{numberToFixedLocaleString(periodsBalanceChange[currentPeriodsIndexMinusOne].amount)}</Text>
         <Text className={twMerge(className.text.strong2, lastMinusAverage < 0 ? "text-light-content-positive dark:text-dark-content-positive" : "text-light-content-negative dark:text-dark-content-negative", "text-right")}>
           {comparisonFormatter.format(lastMinusAverage)}
           {/* <Text className="font-extralight text-light-content-primary dark:text-dark-content-primary">

@@ -117,9 +117,7 @@ export function AnalyticsProvider({ children } : {children : React.ReactNode}) {
 
     const periodsArray = generatePeriodsArray(earliest, latest, breakpoint, amount, unit);
     setPeriods(periodsArray);
-    const now = new Date();
-    const defaultPeriodsIndex = periodsArray.findIndex(date => date > now);
-    setPeriodsIndex(defaultPeriodsIndex === -1 ? periodsArray.length-1 : Math.max(1, defaultPeriodsIndex));
+    setPeriodsIndex(getPeriodsIndexClosestTo(periodsArray, new Date()));
 }
 
   // this effect updates periods every time transactions or settings update
@@ -132,6 +130,15 @@ export function AnalyticsProvider({ children } : {children : React.ReactNode}) {
       {children}
     </AnalyticsContext.Provider>
   );
+}
+
+/**
+ * returns the periodsIndex containing @closestToDate, or the first/last periodsIndex, if closestToDate is outside of the periods.
+ * @param periodsArray assumes periodsArray is in ascending order 
+ */
+export function getPeriodsIndexClosestTo(periodsArray : Date[], closestToDate : Date) : number {
+  const defaultPeriodsIndex = periodsArray.findIndex(date => date > closestToDate);
+  return defaultPeriodsIndex === -1 ? periodsArray.length-1 : Math.max(1, defaultPeriodsIndex)
 }
 
 export function useAnalytics() {
