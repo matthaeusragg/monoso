@@ -55,7 +55,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
   const handleChange = (key: keyof Transaction, value: string | undefined) => {
     setTransaction(prev => {
       const next = value === undefined 
-        ? ((prev: Transaction, key: keyof Transaction) => {const {[key]: _, ...rest} = prev; return rest as Transaction;})(prev, key)
+        ? ((prevF: Transaction, keyF: keyof Transaction) => {const {[keyF]: _, ...rest} = prevF; return rest as Transaction;})(prev, key)
         : {...prev, [key]: value };
       if (next.category_id === "automatic") {
         const matched_category = matchedCategory(next, categories);

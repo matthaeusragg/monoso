@@ -75,7 +75,7 @@ export default function HomeScreen() {
     if(periods.length >= 2) {
       // computations for balance comparison
       const currentPeriodsIndexMinusOne = getPeriodsIndexClosestTo(periods, new Date()) - 1;
-      const {start, end} = getPeriodDates(periods, currentPeriodsIndexMinusOne); 
+      const {start, end} = getPeriodDates(periods, currentPeriodsIndexMinusOne+1); 
 
       const periodTimePassedFactor = (start && end) ? Math.min(1, Math.max(0, (Date.now() - start.getTime()) / (end.getTime() - start.getTime()))) : 1;
 
