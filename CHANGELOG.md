@@ -77,3 +77,8 @@ Initial release
 - Optional transaction fields on the transaction editor view are now hidden behind an expandable row to avoid cluttering the view
 - The period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period
 - Amount validation in the transaction editor
+
+## [Internal testing release 5(1.0.2)]
+
+### Fixed
+- Fixed a bug that displayed spread transaction values incorrectly when one of the default spread dates are used
