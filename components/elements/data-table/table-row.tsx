@@ -1,3 +1,5 @@
+import colors from "@/constants/nativewindColors";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SelectableTransaction, Transaction } from "@/types/models";
 import { Text, View } from "react-native";
 import { Checkbox } from "react-native-paper";
@@ -22,6 +24,7 @@ export const TableRow: React.FC<RowProps> = ({
   transaction,
   onToggle,
 }) => {
+  const colorScheme = useColorScheme() ? 'dark' : 'light';
   // Determine if all transactions are selected for the header checkbox
   const isAllSelected = transactions!.length > 0 && transactions!.every((item) => item.selected);
   const isSomeSelected = transactions!.some((item) => item.selected) && !isAllSelected;
@@ -50,11 +53,15 @@ export const TableRow: React.FC<RowProps> = ({
           <Checkbox
             status={isAllSelected ? 'checked' : isSomeSelected ? 'indeterminate' : 'unchecked'}
             onPress={onToggle}
+            color={colors[colorScheme].content.accent}
+            uncheckedColor={colors[colorScheme].content.secondary}
           />
         ) : (
           <Checkbox
             status={transaction!.selected ? 'checked' : 'unchecked'}
             onPress={onToggle}
+            color={colors[colorScheme].content.accent}
+            uncheckedColor={colors[colorScheme].content.secondary}
           />
         )}
       </Cell>
