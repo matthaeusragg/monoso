@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "monoso",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.matthaeusragg.monoso",
       "supportsTablet": true
@@ -20,7 +19,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true
     },
     "web": {
@@ -50,7 +48,11 @@
           "project": "monoso",
           "organization": "matthaeus-ragg"
         }
-      ]
+      ],
+      "@sentry/react-native",
+      "@react-native-community/datetimepicker",
+      "expo-font",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
