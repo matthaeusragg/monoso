@@ -86,7 +86,9 @@ export const categoryValue = (
                 && matchesType
             ) {
                 if(considerSpread && t.handling_type === "spread") {
-                    catval += (computeSpreadProportion(t, starttime, endtime) ?? 1) * txvalue;
+                    catval += (computeSpreadProportion(t, starttime, endtime) ?? (() => {
+                        throw new Error("Spread period dates data corrupted");
+                    })()) * txvalue;
                 }
                 else { 
                     const timestamptime = new Date(t.timestamp).getTime();
@@ -150,7 +152,9 @@ export const getIrregularTransactions = ({
         ) {
             irregularTransactions.push({
                 transaction: t,
-                this_period_amount: (computeSpreadProportion(t, starttime, endtime) ?? 1) * txvalue
+                this_period_amount: (computeSpreadProportion(t, starttime, endtime) ?? (() => {
+                        throw new Error("Spread period dates data corrupted");
+                    })()) * txvalue
             })
         }
     }

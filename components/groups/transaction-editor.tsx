@@ -164,7 +164,18 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
         {/* Spreading transaction */}
         <SwitchAndDescription 
           value={transaction.handling_type === "spread"}
-          setValue={(val) => handleChange("handling_type", val ? "spread" : "regular")}
+          setValue={(val) => {
+            if(val) {
+              handleChange("handling_type", "spread");
+              handleChange("spread_period_start", new Date(new Date(transaction.timestamp).setHours(0,0,0,0)).toISOString());
+              handleChange("spread_period_end", new Date(new Date(transaction.timestamp).setHours(23,59,59,999)).toISOString());
+            }
+            else {
+              handleChange("handling_type", "regular");
+              handleChange("spread_period_start", undefined);
+              handleChange("spread_period_end", undefined);
+            }
+          }}
           description="Spread transaction across period?"
         />
 
@@ -174,7 +185,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
               Start date and time of the spread period
             </Text>
             <DateTimePickerComponent
-              timestamp={transaction.spread_period_start ?? new Date(new Date(transaction.timestamp).setHours(0,0,0,0)).toISOString()}
+              timestamp={transaction.spread_period_start ?? ""}
               setTimestamp={(val) => handleChange("spread_period_start", val)}
             />
 
@@ -182,7 +193,7 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
               End date and time of the spread period
             </Text>
             <DateTimePickerComponent
-              timestamp={transaction.spread_period_end ?? new Date(new Date(transaction.timestamp).setHours(23,59,59,999)).toISOString()}
+              timestamp={transaction.spread_period_end ?? ""}
               setTimestamp={(val) => handleChange("spread_period_end", val)}
             />
         </>
