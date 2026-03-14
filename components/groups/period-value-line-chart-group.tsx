@@ -1,13 +1,17 @@
 import { className } from '@/constants/classNames';
+import colors from '@/constants/nativewindColors';
+import { getPeriodsIndexClosestTo } from '@/context/analytics-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AnalyticsPeriod } from '@/types/models';
 import React, { useMemo, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 import { CustomLineChart } from '../charts/line-chart';
+import StyledPicker from '../elements/styled-picker';
 
 interface PeriodValueLineChartGroupProps {
   data: AnalyticsPeriod[];
+  periods: Date[];
   lineColor?: string;
   avgLineColor?: string;
   initialPeriodsToShow?: number;
@@ -15,61 +19,62 @@ interface PeriodValueLineChartGroupProps {
 
 export const PeriodValueLineChartGroup: React.FC<PeriodValueLineChartGroupProps> = ({
   data,
+  periods,
   lineColor = useColorScheme() === 'dark'? '#60A5FA' : '#2563EB',
   avgLineColor = useColorScheme() === 'dark'? '#F87171' : '#DC2626',
   initialPeriodsToShow = 6,
 }) => {
-  const [periodsToShow, setPeriodsToShow] = useState(
-    Math.min(initialPeriodsToShow, data.length)
-  );
-  const [inputValue, setInputValue] = useState(periodsToShow.toString());
+  // Picker state
+  const [pickerValue, setPickerValue] = useState<string>(`previous-${initialPeriodsToShow}`);
+  // Find index of current period
+  const currentIdx = getPeriodsIndexClosestTo(periods, new Date()); 
+  // Compute available period options
+  const periodOptions = useMemo(() => {
+    const options = [{ label: 'all', value: 'all' }];
+    for (let i = 2; i <= currentIdx; i++) {
+      options.push({ label: `previous ${i}`, value: `previous-${i}` });
+    }
+    return options;
+  }, [data.length]);
 
   // const spacing = Math.max(30,0.85*Dimensions.get('window').width/periodsToShow);
 
   const chartData = useMemo(() => {
-    const slicedData = data.slice(-periodsToShow);
+    let slicedData: AnalyticsPeriod[] = [];
+    if (pickerValue === 'all') {
+      slicedData = data;
+    } else if (pickerValue.startsWith('previous-')) {
+      const num = parseInt(pickerValue.replace('previous-', ''));
+      // Slice num periods prior to and including current period
+      slicedData = data.slice(Math.max(0, currentIdx - num), currentIdx); // analyticsPeriods is 1 period behind periods
+    }
     const total = slicedData.reduce((sum, item) => sum + item.amount, 0);
     const average = slicedData.length > 0 ? total / slicedData.length : 0;
-
-    const formattedData = slicedData.map((item) => ({
+    return slicedData.map((item) => ({
       x: item.label,
       y1: item.amount,
       y2: average,
     }));
-
-    return formattedData;
-  }, [data, periodsToShow]);
-
-  const handleApplyPeriods = () => {
-    const num = parseInt(inputValue, 10);
-    if (!isNaN(num) && num > 0 && num <= data.length) {
-      setPeriodsToShow(num);
-    } else {
-      setInputValue(periodsToShow.toString());
-    }
-  };
+  }, [data, pickerValue, currentIdx]);
 
   return (
     <View className="p-4 bg-light-surface-elevated dark:bg-dark-surface-elevated rounded-xl">
-      {/* Number of periods Selector */}
-      <View className="flex-row items-center mb-4 gap-2">
-        <Text className={className.text.paragraph}>Show last</Text>
-        <TextInput
-          className={twMerge(className.text.paragraph, "border border-light-outline-default dark:border-dark-outline-default rounded-xl px-2 py-2 w-16 text-center")}
-          value={inputValue}
-          onChangeText={setInputValue}
-          inputMode="numeric"
-          onSubmitEditing={handleApplyPeriods}
-        />
-        <Text className={className.text.paragraph}>
-          of {data.length} periods
-        </Text>
-        <TouchableOpacity
-          className={twMerge(className.button.primary,"px-4 py-2 ml-auto")}
-          onPress={handleApplyPeriods}
-        >
-          <Text className="text-light-content-onAccent dark:text-dark-content-onAccent font-semibold">Apply</Text>
-        </TouchableOpacity>
+      {/* Number of periods Picker */}
+      <View className="flex-row items-center mb-4 gap-x-2">
+        <Text className={twMerge(className.text.paragraph, "text-lg")}>Show </Text>
+        <View className="rounded-xl min-w-[12em] border border-light-outline-default dark:border-dark-outline-default">
+          {/* Use custom StyledPicker */}
+          <StyledPicker
+            selectedValue={pickerValue}
+            onValueChange={setPickerValue}
+            color={colors[useColorScheme() === 'dark' ? 'dark' : 'light'].content.secondary}
+          >
+            {periodOptions.map(opt => (
+              <StyledPicker.Item key={opt.value} label={opt.label} value={opt.value} />
+            ))}
+          </StyledPicker>
+        </View>
+        <Text className={twMerge(className.text.paragraph, "text-lg")}> periods</Text>
       </View>
 
       {/* Chart */}

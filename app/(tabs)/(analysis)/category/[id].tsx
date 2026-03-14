@@ -134,6 +134,7 @@ export default function CategoryAnalysisScreen() {
                 headers={[
                     { component: <PeriodValueLineChartGroup
                         data={analyticsPeriods}
+                        periods={periods}
                         lineColor={isDarkMode ? '#60A5FA' : '#2563EB'}
                         avgLineColor={isDarkMode ? '#F87171' : '#DC2626'}
                         initialPeriodsToShow={6}

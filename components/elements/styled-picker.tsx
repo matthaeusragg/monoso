@@ -3,14 +3,17 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 import React from 'react';
 
-const StyledPicker = ({children, ...props}  : PickerProps) => {
-  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+interface StyledPickerProps extends PickerProps {
+  color?: string;
+}
+
+const StyledPicker = ({children, color = colors[useColorScheme() === 'dark' ? 'dark' : 'light'].content.primary, ...props}  : StyledPickerProps) => {
   return (
     <Picker
         style={{
-            color: colors[colorScheme].content.primary,
+            color: color,
         }}
-        dropdownIconColor={ colors[colorScheme].content.primary}
+        dropdownIconColor={color}
         {...props}
       >
         {children}

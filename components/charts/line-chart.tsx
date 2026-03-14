@@ -87,7 +87,8 @@ export const CustomLineChart = ({
           }}
           viewport={{ x: [Math.max(chartData.length-10,0), chartData.length] }}
           domain={{
-            x: [0, chartData.length]
+            x: [0, chartData.length],
+            y: [0]
           }}
           xAxis={{
             font,

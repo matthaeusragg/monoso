@@ -82,3 +82,8 @@ Initial release
 
 ### Fixed
 - Fixed a bug that displayed spread transaction values incorrectly when one of the default spread dates are used
+
+### Improved
+- By default, the selected periods on the category screen now show the 6 previous periods relative to the current date
+- Provided a dropdown to select of number of periods on the category analysis screen
+- The period line chart's y axis now starts at 0
