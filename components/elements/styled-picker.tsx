@@ -4,13 +4,13 @@ import { Picker, PickerProps } from '@react-native-picker/picker';
 import React from 'react';
 
 const StyledPicker = ({children, ...props}  : PickerProps) => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   return (
     <Picker
         style={{
-            color: isDarkMode ? colors.dark.content.primary : colors.light.content.primary,
+            color: colors[colorScheme].content.primary,
         }}
-        dropdownIconColor={isDarkMode ? colors.dark.content.primary : colors.light.content.primary}
+        dropdownIconColor={ colors[colorScheme].content.primary}
         {...props}
       >
         {children}
