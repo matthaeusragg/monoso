@@ -78,7 +78,10 @@ Initial release
 - The period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period
 - Amount validation in the transaction editor
 
-## [Internal testing release 5(1.0.2)]
+## [Internal testing release 5(1.0.2)] - 2026-03-14
+
+- Irregular transactions now show the correct proportionate amount in the analysis in all cases
+- Selecting which periods to show on the category line chart is now more intiutive
 
 ### Fixed
 - Fixed a bug that displayed spread transaction values incorrectly when one of the default spread dates are used
