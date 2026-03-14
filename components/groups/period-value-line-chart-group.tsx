@@ -17,6 +17,12 @@ interface PeriodValueLineChartGroupProps {
   initialPeriodsToShow?: number;
 }
 
+/**
+ * 
+ * @param data An analyticsPeriod array mainly used for creating the chart. It is required that data[i].starttime corresponds to periods[i] and data[i].endtime corresponds to periods[i+1];
+ * @param periods The original periods array 
+ * @returns 
+ */
 export const PeriodValueLineChartGroup: React.FC<PeriodValueLineChartGroupProps> = ({
   data,
   periods,
