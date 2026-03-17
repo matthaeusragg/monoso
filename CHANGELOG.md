@@ -91,7 +91,7 @@ Initial release
 - Provided a dropdown to select of number of periods on the category analysis screen
 - The period line chart's y axis now starts at 0
 
-## Release 6(1.0.3) [Closed testing]
+## Release 6(1.0.3) [Closed testing] - 2026-03-17
 
 ### Fixed
 - Refined transaction comparison, so that now, (regular or analysis) amounts of "25.00" and "25" are considered equal. This prevents that upon opening the transaction details screen, the app thinks that changes have been made, even if the user hasn't, since upon loading the transaction details screen, "25.00" is parsed to "25"

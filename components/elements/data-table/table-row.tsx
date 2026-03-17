@@ -81,7 +81,7 @@ export const TableRow: React.FC<RowProps> = ({
             ? column.title 
             : transaction!.transaction[column.transactionKey] ?? "—"}
           </Text>
-        </Cell>  
+        </Cell>
       ))}
     </View>
   );
