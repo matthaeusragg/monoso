@@ -1,3 +1,5 @@
+import { Transaction } from "@/types/models";
+
 /**
  * The following supports primitives, json objects, arrays of such and maybe more.
  * Note: Array order matters, json key order does not. 
@@ -39,6 +41,20 @@ export const isDeepEqual = (a: any, b: any): boolean => {
 
   return true;
 };
+
+/**
+ * isDeepEqual but with special handling for transactions: We want to parse the amount and analysis_amount strings to numbers before comparing, so that for example "1.00" and "1" are considered equal
+ * @param a 
+ * @param b 
+ * @returns 
+ */
+export const isDeepEqualTransaction = (a: Transaction | undefined, b: Transaction | undefined): boolean => {
+  if (a === undefined && b === undefined) return true;
+  if (a === undefined || b === undefined) return false;
+  const aWithParsedAmounts = {...a, amount: parseFloat(a.amount), analysis_amount: a.analysis_amount != null ? parseFloat(a.analysis_amount) : undefined};
+  const bWithParsedAmounts = {...b, amount: parseFloat(b.amount), analysis_amount: b.analysis_amount != null ? parseFloat(b.analysis_amount) : undefined};
+  return isDeepEqual(aWithParsedAmounts, bWithParsedAmounts);
+}
 
 /**
  * unifies num.toFixed(2) (for number of decimal places) and num.toLocaleString() for thousand separators

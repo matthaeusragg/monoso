@@ -78,7 +78,7 @@ Initial release
 - The period selected by default is now the one containing the current date (or the closest to it), instead of always the last computed period
 - Amount validation in the transaction editor
 
-## [Internal testing release 5(1.0.2)] - 2026-03-14
+## [Internal testing release 5(1.0.2)] - 2026-03-14 / First closed testing release
 
 - Irregular transactions now show the correct proportionate amount in the analysis in all cases
 - Selecting which periods to show on the category line chart is now more intiutive
@@ -90,3 +90,11 @@ Initial release
 - By default, the selected periods on the category screen now show the 6 previous periods relative to the current date
 - Provided a dropdown to select of number of periods on the category analysis screen
 - The period line chart's y axis now starts at 0
+
+## Release 6(1.0.3) [Closed testing]
+
+### Fixed
+- Refined transaction comparison, so that now, (regular or analysis) amounts of "25.00" and "25" are considered equal. This prevents that upon opening the transaction details screen, the app thinks that changes have been made, even if the user hasn't, since upon loading the transaction details screen, "25.00" is parsed to "25"
+
+### Improved
+- Extended transaction validation: The "Save"/"Submit" button on the transaction editor now does not save in more error cases. Note: alerts/visible errors are yet to be implemented

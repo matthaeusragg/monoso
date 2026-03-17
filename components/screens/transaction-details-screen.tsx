@@ -2,11 +2,11 @@ import { useTransactions } from "@/context/transaction-context";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import CustomHeader from "@/components/elements/custom-header";
-import TransactionEditor, { validateTransactionInput } from "@/components/groups/transaction-editor";
+import TransactionEditor, { validateTransaction } from "@/components/groups/transaction-editor";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { className } from "@/constants/classNames";
 import colors from "@/constants/nativewindColors";
-import { isDeepEqual } from "@/functions/handling";
+import { isDeepEqualTransaction } from "@/functions/handling";
 import { useConfirmBackNavigation } from "@/hooks/use-confirm-back-navigation";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
@@ -27,7 +27,7 @@ export default function TransactionDetailsScreen() {
     getTransaction(id)
   );
 
-  const hasChanges = !isDeepEqual(transaction, getTransaction(id));
+  const hasChanges = !isDeepEqualTransaction(transaction, getTransaction(id));
 
   // intercept router.back()
   useConfirmBackNavigation(hasChanges);
@@ -77,7 +77,7 @@ export default function TransactionDetailsScreen() {
           className={ hasChanges ? className.button.primary : className.button.secondary}
           onPress={() => {
             if (hasChanges && transaction) {
-              if(!validateTransactionInput(transaction)) return;
+              if(!validateTransaction(transaction)) return;
               updateTransactions(transaction);
             }
             router.back();

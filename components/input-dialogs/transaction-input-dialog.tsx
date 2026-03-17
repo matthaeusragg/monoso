@@ -1,4 +1,4 @@
-import TransactionEditor, { validateTransactionInput } from "@/components/groups/transaction-editor";
+import TransactionEditor, { validateTransaction } from "@/components/groups/transaction-editor";
 import { useTransactions } from "@/context/transaction-context";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
@@ -43,7 +43,7 @@ export default function TransactionInputDialog({
       title="Add transaction" 
       onCancel={() => { onCancel();reset(); }} 
       onSubmit={() => {
-                if(!validateTransactionInput(transaction)) return;
+                if(!validateTransaction(transaction)) return;
                 addTransactions({
                   ...transaction,
                   id: Date.now().toString(),
