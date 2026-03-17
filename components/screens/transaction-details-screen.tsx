@@ -2,11 +2,11 @@ import { useTransactions } from "@/context/transaction-context";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import CustomHeader from "@/components/elements/custom-header";
-import TransactionEditor, { validateTransaction } from "@/components/groups/transaction-editor";
+import TransactionEditor from "@/components/groups/transaction-editor";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { className } from "@/constants/classNames";
 import colors from "@/constants/nativewindColors";
-import { isDeepEqualTransaction } from "@/functions/handling";
+import { isDeepEqualTransaction, validateTransaction } from "@/functions/handling";
 import { useConfirmBackNavigation } from "@/hooks/use-confirm-back-navigation";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
@@ -77,7 +77,13 @@ export default function TransactionDetailsScreen() {
           className={ hasChanges ? className.button.primary : className.button.secondary}
           onPress={() => {
             if (hasChanges && transaction) {
-              if(!validateTransaction(transaction)) return;
+              // validate transaction before saving. If invalid, show an alert and exit the function early without saving the transaction
+              const { isValid, message } = validateTransaction(transaction);
+              if (!isValid) {
+                alert(`Failed saving transaction: ${message}`);
+                return;
+              }
+              // if transaction is valid, save it
               updateTransactions(transaction);
             }
             router.back();

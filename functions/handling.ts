@@ -57,6 +57,58 @@ export const isDeepEqualTransaction = (a: Transaction | undefined, b: Transactio
 }
 
 /**
+ * 
+ * @param transaction 
+ * @returns Whether or not the input is valid and can be parsed to a transaction. If isValid===false, the parent onSubmit call should exit early. message gives more details
+ */
+export const validateTransaction = (transaction: Transaction): { isValid: boolean, message?: string } => {
+  const amountRegexVerifier = /^-?\d+(\.\d+)?$|^-?\.\d+$/; // this regex matches valid number inputs (including those starting with a dot, like .5 or -.5)
+
+  // if name is empty
+  if (!transaction.name.trim()) {
+    return { isValid: false, message: "Transaction name cannot be empty." };
+  }
+
+  // or amount is empty
+  if (!transaction.amount.trim()) {
+    return { isValid: false, message: "Amount cannot be empty." };
+  }
+
+  // if amount is not typed correctly
+  if (!amountRegexVerifier.test(transaction.amount.trim())) {
+    return { isValid: false, message: "Amount must be a valid number." };
+  }
+
+  // if timestamp is not a valid date 
+  if (isNaN(new Date(transaction.timestamp).getTime())) {
+    return { isValid: false, message: "Transaction date is invalid." };
+  }
+
+  // if handling type is spread but the spread period is invalid
+  if (transaction.handling_type === "spread" && (
+    isNaN(new Date(transaction.spread_period_start ?? "").getTime()) || 
+    isNaN(new Date(transaction.spread_period_end ?? "").getTime()) || 
+    new Date(transaction.spread_period_start ?? "") > new Date(transaction.spread_period_end ?? "")
+  )) {
+    return { isValid: false, message: "Spread period must have valid start and end dates, and start must be before end." };
+  }
+
+  // if analysis amount is set but invalid
+  if (transaction.analysis_amount != null) {
+    // if analysis amount is empty
+    if (!transaction.analysis_amount.trim()) {
+      return { isValid: false, message: "Analysis amount cannot be empty if provided." };
+    }
+    // if analysis amount is not typed correctly
+    if (!amountRegexVerifier.test(transaction.analysis_amount.trim())) {
+      return { isValid: false, message: "Analysis amount must be a valid number." };
+    }
+  }
+
+  return { isValid: true };
+};
+
+/**
  * unifies num.toFixed(2) (for number of decimal places) and num.toLocaleString() for thousand separators
  */
 export const numberToFixedLocaleString = (

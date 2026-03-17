@@ -96,5 +96,8 @@ Initial release
 ### Fixed
 - Refined transaction comparison, so that now, (regular or analysis) amounts of "25.00" and "25" are considered equal. This prevents that upon opening the transaction details screen, the app thinks that changes have been made, even if the user hasn't, since upon loading the transaction details screen, "25.00" is parsed to "25"
 
-### Improved
-- Extended transaction validation: The "Save"/"Submit" button on the transaction editor now does not save in more error cases. Note: alerts/visible errors are yet to be implemented
+### Added
+- Extended transaction validation: The "Save"/"Submit" button on the transaction editor now does not save in more error cases
+    - Additionally, the user receives an alert that and where the validation failed
+- The CSV import now parses the CSV string using papaparse, and thus, supports more delimiters (previously only ";")
+- The CSV import now validates all transactions to be imported, and alerts that and where the validation failed

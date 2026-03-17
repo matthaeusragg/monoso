@@ -1,5 +1,6 @@
-import TransactionEditor, { validateTransaction } from "@/components/groups/transaction-editor";
+import TransactionEditor from "@/components/groups/transaction-editor";
 import { useTransactions } from "@/context/transaction-context";
+import { validateTransaction } from "@/functions/handling";
 import { Transaction } from "@/types/models";
 import React, { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -43,7 +44,13 @@ export default function TransactionInputDialog({
       title="Add transaction" 
       onCancel={() => { onCancel();reset(); }} 
       onSubmit={() => {
-                if(!validateTransaction(transaction)) return;
+                // validate transaction before adding. If invalid, show an alert and exit the function early without adding the transaction
+                const { isValid, message } = validateTransaction(transaction);
+                if (!isValid) {
+                  alert(`Failed adding transaction: ${message}`);
+                  return;
+                }
+                // if transaction is valid, add it
                 addTransactions({
                   ...transaction,
                   id: Date.now().toString(),

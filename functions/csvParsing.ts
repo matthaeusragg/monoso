@@ -4,31 +4,10 @@
 import { endingRegexPattern, FIELD_KEYWORDS, FIELD_KEYWORDS_KEYS } from "@/constants/csvImport/csvSemanticFieldKeywords";
 import { REGEX_PATTERNS, REGEX_PATTERNS_KEYS } from "@/constants/csvImport/regexRules";
 import { Transaction } from "@/types/models";
+import Papa from "papaparse";
+import { Alert } from "react-native";
 
-let id_counter = 0;
-
-export function smartSplit(line: string): string[] {
-  // Respect semicolons inside quotes
-  const result: string[] = [];
-  let current = "";
-  let insideQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-
-    if (char === "\"") insideQuotes = !insideQuotes;
-    else if (char === ";" && !insideQuotes) {
-      result.push(current.trim());
-      current = "";
-      continue;
-    }
-
-    current += char;
-  }
-
-  if (current.length) result.push(current.trim());
-  return result;
-}
+let id_counter = 0; // a simple counter to ensure unique ids for transactions
 
 type Patterns = {
   [key in keyof Transaction]?: string;
@@ -122,8 +101,7 @@ export function keywordSearchForField(field : keyof typeof FIELD_KEYWORDS, colum
   return pattern;
 }
 
-export function parseTransactionRow(row: string): Transaction | null {
-  const columns = smartSplit(row); // tbh I don't need smartSplit here, but it doesn't hurt
+export function parseTransactionRow(columns: string[]): Transaction | null {
   if (columns.length === 0) return null;
 
   const patterns : Patterns = regexSearch(columns);
@@ -156,8 +134,13 @@ export function parseTransactionRow(row: string): Transaction | null {
 }
 
 export function parseCsv(text: string): Transaction[] {
+  const { data, errors, meta } = Papa.parse(text, { header: false });
+  for (const error of errors) {
+    Alert.alert("Error parsing CSV:", error.message);
+    return [];
+  }
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
-  return lines
-    .map((line) => parseTransactionRow(line))
+  return data
+    .map((line) => parseTransactionRow(line as string[]))
     .filter((x): x is Transaction => x !== null);
 }

@@ -2,6 +2,7 @@ import { className } from "@/constants/classNames";
 import { useCategories } from "@/context/category-context";
 import { useTransactions } from "@/context/transaction-context";
 import { parseCsv } from "@/functions/csvParsing";
+import { validateTransaction } from "@/functions/handling";
 import { isExistingTransaction } from "@/functions/mergeTransactions";
 import { SelectableTransaction } from "@/types/models";
 import * as DocumentPicker from "expo-document-picker";
@@ -73,16 +74,23 @@ export default function CsvUploadModal({ visible, onCancel, onImport } : {visibl
             }}
     onSubmit={
       () => {
-              addTransactions(
-                  newTransactions
-                      .filter((t) => t.selected)
-                      .map((t)=> t.transaction)
-                      .map((t) => ({...t, category_id: t.category_id ??  matchedCategory(t, categories) ?? "automatic"}))
-                );
-              onImport();
-              setNewTransactions([]);
-              setFileName(null);
-            }}
+            const transactionsToImport = newTransactions.filter((t) => t.selected).map((t) => t.transaction);
+            // validate transactions before importing. If any transaction is invalid, show an alert and exit the function early without importing any transactions
+            for (const t of transactionsToImport) {
+              const { isValid, message } = validateTransaction(t);
+              if (!isValid) {
+                alert(`Failed importing: Transaction "${t.name}" is invalid. ${message}`);
+                return;
+              }
+            }
+            // if all transactions are valid, import them
+            addTransactions(
+                transactionsToImport.map((t) => ({...t, category_id: t.category_id ??  matchedCategory(t, categories) ?? "automatic"}))
+              );
+            onImport();
+            setNewTransactions([]);
+            setFileName(null);
+          }}
     submitName="Confirm"
     >
 

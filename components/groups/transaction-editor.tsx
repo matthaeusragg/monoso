@@ -232,33 +232,3 @@ export default function TransactionEditor({ transaction, setTransaction, ...prop
     </View>
   );
 }
-
-/**
- * 
- * @param transaction 
- * @returns Whether or not the input is valid and can be parsed to a transaction. If false, the parent onSubmit call should exit early
- */
-export const validateTransaction = (transaction : Transaction) : boolean => {
-  const amountRegexVerifier = /^-?\d+(\.\d+)?$|^-?\.\d+$/; // this regex matches valid number inputs (including those starting with a dot, like .5 or -.5)
-  if (
-      // if name is empty
-      !transaction.name.trim()
-      // or amount is empty
-      || !transaction.amount.trim()
-      // if amount is not typed correctly
-      || !amountRegexVerifier.test(transaction.amount.trim())
-      // if timestamp is not a valid date 
-      || isNaN(new Date(transaction.timestamp).getTime()) 
-      // if handling type is spread but the spread period is invalid
-      || (transaction.handling_type === "spread" && (isNaN(new Date(transaction.spread_period_start ?? "").getTime()) || isNaN(new Date(transaction.spread_period_end ?? "").getTime()) || new Date(transaction.spread_period_start ?? "") > new Date(transaction.spread_period_end ?? ""))) 
-      // if analysis amount is set but invalid
-      || (transaction.analysis_amount != null && ( 
-        // if analysis amount is empty
-        !transaction.analysis_amount.trim() 
-        // if analysis amount is not typed correctly
-        || !amountRegexVerifier.test(transaction.analysis_amount.trim()) 
-      ))
-    )
-      return false;
-  return true;
-}
